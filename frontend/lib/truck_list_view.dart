@@ -4,38 +4,30 @@ import 'truck_service.dart';
 
 class FoodTruckListView extends StatefulWidget {
 	static String id = "foodtrucklistview";
+	List<TruckModel> trucks;
+	FoodTruckListView(this.trucks);
+
 	@override
 	TruckListState createState() => TruckListState(); 
 }
 
 class TruckListState extends State<FoodTruckListView> {
-	Future<List<TruckModel>> foodTruckList;
 
 	@override
 	void initState() {
 		super.initState();
-    	foodTruckList = getFoodTruckList();
 	}
 
 	Widget _buildTruckLists() {
-		return 
-			FutureBuilder(
-				builder: (context, projectSnap) { 
-					switch (projectSnap.connectionState) {
-						case ConnectionState.none:
-          				case ConnectionState.waiting:
-          					return CircularProgressIndicator();
-						default:
-							return ListView.builder(
-								itemBuilder: (context, i) {
-									return _buildTruckCard(projectSnap.data[i]);
-								},
-							    itemCount: projectSnap.data.length,
-							);
-					}
-				},
-				future: getFoodTruckList(),
-			);	
+		return ListView.separated(
+			separatorBuilder: (context, index) => Divider(
+	          color: Colors.transparent,
+	        ),
+			itemBuilder: (context, i) {
+				return _buildTruckCard(widget.trucks[i]);
+			},
+		    itemCount: widget.trucks.length,
+		);
 	}
 
 	Widget _buildTruckCard(TruckModel truck) {
@@ -91,11 +83,6 @@ class TruckListState extends State<FoodTruckListView> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-	      appBar: AppBar(
-	      	  title: const Text("Food Truck Lists"),
-	          actions: <Widget>[
-	          ]
-	        ),
 	      body: _buildTruckLists(),
 	     );
 	}
