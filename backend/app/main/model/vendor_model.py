@@ -13,3 +13,5 @@ class Vendor(db.Document):
     displayed_name = db.StringField(required=True, unique=True)
     location = db.EmbeddedDocumentField(Location)
     schedule = db.EmbeddedDocumentField(Schedule)
+    description = db.StringField()
+    tags = db.ListField(db.StringField())

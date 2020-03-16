@@ -6,6 +6,7 @@ from ..service.vendor_service import *
 
 api = VendorDto.api
 _vendor = VendorDto.vendor
+_vendor_detail = VendorDto.vendor_detail
 
 @api.route('/home')
 class Home(Resource):
@@ -25,7 +26,7 @@ class VendorList(Resource):
 @api.response(404, 'User not found.')
 class Vendor(Resource):
     @api.doc('get a vendor')
-    @api.marshal_with(_vendor)
+    @api.marshal_with(_vendor_detail)
     def get(self, vendor_username):
         """get a vendor with its identifier"""
         vendor = get_vendor_by_username(vendor_username)

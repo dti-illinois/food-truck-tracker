@@ -7,4 +7,4 @@ def get_all_vendors():
     return ret
 
 def get_vendor_by_username(username):
-    return json.loads(Vendor.objects(username=username).to_json())
+    return json_util.loads(Vendor.objects(username=username).to_json())
