@@ -16,3 +16,7 @@ class VendorDto:
         'location': fields.Nested(location, description='vendor location'),
         'schedule': fields.Nested(schedule, description='vendor schedule'),
     })
+    vendor_detail = api.inherit('vendor_detail', vendor, {
+        'description': fields.String(description='vendor description'),
+        'tags': fields.List(fields.String),
+    })
