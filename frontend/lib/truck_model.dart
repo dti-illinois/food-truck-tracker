@@ -35,4 +35,7 @@ class Schedule {
 		return new Schedule(start: new DateFormat("hh:mm").format(DateTime.parse(json['start'])), 
 			end: new DateFormat("hh:mm").format(DateTime.parse(json['end'])));
 	}
+	String toString() {
+		return '${this.start} - ${this.end}';
+	}
 }

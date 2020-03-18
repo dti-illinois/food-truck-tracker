@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'truck_list_view.dart';
+import 'truck_panel.dart';
 
 void main() => runApp(FoodTruckTracker());
 
@@ -9,9 +9,9 @@ class FoodTruckTracker extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Rokwire FoodTruckTracker',
-      initialRoute: FoodTruckListView.id,
+      initialRoute: 'trucks',
       routes: {
-        FoodTruckListView.id: (context) => FoodTruckListView(),
+        'trucks': (context) => TruckPanel(),
       },
       theme: ThemeData(
           primaryColor: Colors.purple,
