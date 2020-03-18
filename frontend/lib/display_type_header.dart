@@ -1,5 +1,8 @@
-/*
- * Copyright (c) 2019 Illinois. All rights reserved.
+/* 
+ * Title: Illinois Rokwire Source Code 
+ * Author: Illinois Rokwire
+ * Date: 2019
+ * Availability: https://github.com/rokwire/illinois-client/blob/develop/lib/ui/widgets/ExploreDisplayTypeHeader.dart
  */
 
 import 'package:flutter/cupertino.dart';
