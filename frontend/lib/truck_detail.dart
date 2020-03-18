@@ -14,6 +14,7 @@ class TruckDetailView extends StatefulWidget {
 }
 
 class _TruckDetailState extends State<TruckDetailView> {
+  TruckModel truck;
   _TruckDetailState(this.truck);
 
   bool _isTruckLoading = false;
@@ -27,7 +28,10 @@ class _TruckDetailState extends State<TruckDetailView> {
   void _loadFoodTruckDetail() {
     _isTruckLoading = true;
     getFoodTruck(truck.username).then((TruckModel detailTruck) {
-        this.setState(() {truck = detailTruck;});
+        this.setState(() {
+          truck = detailTruck;
+          _isTruckLoading = false;
+        });
       });
   }
 
@@ -179,7 +183,6 @@ class _TruckDetailState extends State<TruckDetailView> {
 
   @override
   Widget build(BuildContext context) {
-      TruckModel truck = ModalRoute.of(context).settings.arguments;
     return _isTruckLoading? Stack(
             alignment: Alignment.center,
             children: <Widget>[

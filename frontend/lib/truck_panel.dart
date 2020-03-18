@@ -77,7 +77,15 @@ class TruckPanelState extends State<TruckPanel> {
 	}
 
 	Widget _buildLoadingView() {
-
+		return Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              )
+            ],
+          );
 	}
 
 	@override

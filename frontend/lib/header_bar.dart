@@ -1,4 +1,8 @@
-
+/*
+* Author: Illinois RokWire
+* Year: 2019
+* Source: https://github.com/rokwire/illinois-client/blob/develop/lib/ui/widgets/HeaderBar.dart
+* */
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +35,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                imageUrl == '' ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover,)) : Container(),
+                imageUrl != '' ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover,)) : Container(),
               ],
             ),
           ))

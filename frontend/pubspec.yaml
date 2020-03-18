@@ -52,6 +52,9 @@ flutter:
      - images/icon-map-view.png
      - images/icon-search.png
      - images/chevron-left-white.png
+     - images/icon-star.png
+     - images/icon-location.png
+     - images/icon-time.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

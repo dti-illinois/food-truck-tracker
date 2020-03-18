@@ -11,13 +11,21 @@ class FoodTruckTracker extends StatelessWidget {
     return MaterialApp(
       title: 'Rokwire FoodTruckTracker',
       initialRoute: 'trucks',
+      onGenerateRoute: (settings) {
+          if (settings.name == "truck_detail") {
+            return MaterialPageRoute(
+              builder: (context) {
+                return TruckDetailView(truck: settings.arguments);
+              },
+            );
+          }
+      },
       routes: {
         'trucks': (context) => TruckPanel(),
-        'truck_detail': (context) => TruckDetailView(), 
       },
       theme: ThemeData(
           primaryColor: Colors.purple,
-        )
+      ),
     );
   }
 }
