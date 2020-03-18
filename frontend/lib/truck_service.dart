@@ -18,3 +18,12 @@ Future<List<TruckModel>> getFoodTruckList() async {
     throw Exception('Failed to load trucks');
   }
 }
+
+Future<TruckModel> getFoodTruck(String username) async {
+  final response = await http.get(host+'/vendor/' + username);
+  if (response.statusCode == 200) {
+ 	return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load trucks');
+  }
+}
