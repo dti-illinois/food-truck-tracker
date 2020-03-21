@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'utils/Utils.dart';
 import 'display_type_header.dart';
 import 'filter_tab.dart';
@@ -24,6 +25,8 @@ class TruckPanel extends StatefulWidget {
 }
 
 class TruckPanelState extends State<TruckPanel> {
+	StreamController<List<TruckModel>> _truckController = StreamController<List<TruckModel>>();
+
 	ListMapDisplayType _displayType = ListMapDisplayType.List;
 	List<TruckModel> _trucks = []; 
 	Future<List<TruckModel>> _taskLoading;
@@ -43,18 +46,48 @@ class TruckPanelState extends State<TruckPanel> {
 	}
 
 	void _loadTruckList() {
-		// bool onlyOpen = _getOnlyOpenFilter(_truckFilters);
-		// Tag tag = _getTruckTag(_truckFilters);
-		// _taskLoading = getFoodTruckList(onlyOpen, tag);
-		// _taskLoading.then((List<TruckModel> trucks) {
-		// 		_refresh(() {
-		// 			_trucks = trucks;
-		// 			_taskLoading = null; 
-		// 		});
-		// });
+		bool onlyOpen = _getOnlyOpenFilter(_truckFilters);
+		Tag tag = _getTruckTag(_truckFilters);
+		_taskLoading = getFoodTruckList(onlyOpen, tag);
+		_taskLoading.then((List<TruckModel> trucks) {
+				_refresh(() {
+					_trucks = trucks;
+					_taskLoading = null; 
+					_updateTrucksOnMap(_trucks);
+				});
+		});
 	}
 
+	void _updateTrucksOnMap(List<TruckModel> trucks) {
+		print("_updateTrucksOnMap is called");
+		print(trucks);
+		_truckController.add(trucks);
+	}
 
+	bool _getOnlyOpenFilter(List<Filter> filters) {
+		for (Filter selectedFilter in filters) {
+	      if (selectedFilter.type == FilterType.WorkTime) {
+	        int index = selectedFilter.firstSelectedIndex;
+	        return index == 0;
+	      }
+	    }
+	    return false;
+	}
+
+	Tag _getTruckTag(List<Filter> filters) {
+		for (Filter selectedFilter in filters) {
+	      if (selectedFilter.type == FilterType.Tag) {
+	        int index = selectedFilter.firstSelectedIndex;
+	        if (index == 0) {
+	          return null; //All tag types
+	        }
+	        return (_filterTagValues.length > index)
+	            ? Tag.values[index - 1]
+	            : null;
+	      }
+	    }
+	    return null;
+	}
 
 	void _initFilters() {
 		_filterOptionsVisible = false;
@@ -63,7 +96,7 @@ class TruckPanelState extends State<TruckPanel> {
 		for(Tag tag in Tag.values) {
 			_filterTagValues.add(TagHelper.tagToString(tag));
 		}
-		_filterWorkTimeValues = ["Is Open Now", "All"];
+		_filterWorkTimeValues = ["Is Open Now", "All Food Trucks"];
 	}
 
 	void _selectDisplayType (ListMapDisplayType displayType) {
@@ -98,7 +131,7 @@ class TruckPanelState extends State<TruckPanel> {
 			return _buildLoadingView(); 
 		}
 		return Container(
-				child: FoodTruckMapView(Location(lat: 40.1129, lng: -88.2262), _trucks)
+				child: FoodTruckMapView(Location(lat: 40.1129, lng: -88.2262), _truckController.stream), 
 		);
 	}
 
