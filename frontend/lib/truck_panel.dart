@@ -30,22 +30,34 @@ class TruckPanelState extends State<TruckPanel> {
 	List<Filter> _truckFilters; 
 	List<String> _filterTagValues;
 	List<String> _filterWorkTimeValues;
+	bool _filterOptionsVisible; 
+	ScrollController _scrollController = ScrollController();
+
 
 	@override 
 	void initState() {
 		_initFilters();
-		_taskLoading = getFoodTruckList();
-		_taskLoading.then((List<TruckModel> trucks) {
-				_refresh(() {
-					_trucks = trucks;
-					_taskLoading = null; 
-				});
-		});
+		_loadTruckList();
 		super.initState();
 
 	}
 
+	void _loadTruckList() {
+		// bool onlyOpen = _getOnlyOpenFilter(_truckFilters);
+		// Tag tag = _getTruckTag(_truckFilters);
+		// _taskLoading = getFoodTruckList(onlyOpen, tag);
+		// _taskLoading.then((List<TruckModel> trucks) {
+		// 		_refresh(() {
+		// 			_trucks = trucks;
+		// 			_taskLoading = null; 
+		// 		});
+		// });
+	}
+
+
+
 	void _initFilters() {
+		_filterOptionsVisible = false;
 		_truckFilters = [new Filter(type: FilterType.Tag), new Filter(type:FilterType.WorkTime)];
 		_filterTagValues = ["All Tags"];
 		for(Tag tag in Tag.values) {
@@ -139,9 +151,64 @@ class TruckPanelState extends State<TruckPanel> {
 	            filter.active = false;
 	          }
 	        }
-		    selectedFilter.active = !selectedFilter.active;
+		    selectedFilter.active = _filterOptionsVisible = !selectedFilter.active;
 	    });
 	  }
+
+	void _onFilterValueClick(Filter selectedFilter, int index) {
+		selectedFilter.selectedIndexes = {index};
+		selectedFilter.active = _filterOptionsVisible = !selectedFilter.active;
+		_loadTruckList();
+	}
+
+	Widget _buildFilterValueContainers() {
+		Filter selectedFilter = null; 
+		for(Filter filter in _truckFilters) {
+			if (filter.active) {
+				selectedFilter = filter;
+				break;
+			}
+		}
+		if(selectedFilter == null){
+			return Container();
+		}
+		List<String> filterValues = _getFilterValuesByType(selectedFilter.type);
+		return Semantics(child:Visibility(
+			      visible: _filterOptionsVisible,
+			      child: Padding(
+			          padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
+			          child: Semantics(child:Container(
+			            decoration: BoxDecoration(
+			              color: UiColors.illinoisOrange,
+			              borderRadius: BorderRadius.circular(5.0),
+			            ),
+			            child: Padding(
+			              padding: EdgeInsets.only(top: 2),
+			              child: Container(
+			                color: Colors.white,
+			                child: ListView.separated(
+			                  shrinkWrap: true,
+			                  separatorBuilder: (context, index) => Divider(
+			                        height: 1,
+			                        color: UiColors.darkSlateBlueTwoTransparent03,
+			                      ),
+			                  itemCount: filterValues.length,
+			                  itemBuilder: (context, index) {
+			                    return FilterListItemWidget(
+			                      label: filterValues[index],
+			                      selected: (selectedFilter.selectedIndexes != null && selectedFilter.selectedIndexes.contains(index)),
+			                      onTap: () {
+			                        _onFilterValueClick(selectedFilter, index);
+			                      },
+			                    );
+			                  },
+			                  controller: _scrollController,
+			                ),
+			              ),
+			            ),
+			          ))),
+			    ));
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -188,7 +255,7 @@ class TruckPanelState extends State<TruckPanel> {
 			                        	) // Expanded
 			                        ],
 			                    ),  // Column
-			                   // _buildFilterValueContainers();
+			                    _buildFilterValueContainers(),
 		                  	],
 		                ), // Stack 
 		        	), // Expanded 

@@ -56,6 +56,8 @@ flutter:
      - images/icon-time.png
      - images/icon-up.png
      - images/icon-down.png
+     - images/icon-selected.png
+     - images/icon-unselected.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
