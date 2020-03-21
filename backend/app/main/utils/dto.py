@@ -15,8 +15,8 @@ class VendorDto:
         'username': fields.String(required=True, description='vendor username'),
         'location': fields.Nested(location, description='vendor location'),
         'schedule': fields.Nested(schedule, description='vendor schedule'),
+        'tags': fields.List(fields.String),
     })
     vendor_detail = api.inherit('vendor_detail', vendor, {
         'description': fields.String(description='vendor description'),
-        'tags': fields.List(fields.String),
     })
