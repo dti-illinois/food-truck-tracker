@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 class UiColors {
@@ -66,6 +67,30 @@ class UiColors {
     }
     return null;
   }
+}
 
+class LocationUtils {
+  static final double defaultLocationLat = 40.096230;
+  static final double defaultLocationLng = -88.235899;
+  static final int defaultLocationRadiusInMeters = 1000;
 
+  static double distance(double lat1, double lon1, double lat2, double lon2) {
+    double theta = lon1 - lon2;
+    double dist = sin(deg2rad(lat1)) 
+                    * sin(deg2rad(lat2))
+                    + cos(deg2rad(lat1))
+                    * cos(deg2rad(lat2))
+                    * cos(deg2rad(theta));
+    dist = acos(dist);
+    dist = rad2deg(dist);
+    dist = dist * 60 * 1.1515;
+    return (dist);
+  }
+  static double deg2rad(double deg) {
+      return (deg * pi / 180.0);
+  }
+
+  static double rad2deg(double rad) {
+      return (rad * 180.0 / pi);
+  }  
 }

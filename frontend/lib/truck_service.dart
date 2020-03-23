@@ -12,7 +12,8 @@ Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
  	List<TruckModel> trucks = [];
  	l.forEach((model) {
  		TruckModel truck = TruckModel.fromJson(model);
- 		if ((tag == null || truck.tags.contains(tag))) {
+ 		if ((tag == null || truck.tags.contains(tag)) 
+ 			&& (!onlyOpen || truck.isOpen)) {
  			    trucks.add(truck);
  		}
  	});

@@ -8,9 +8,12 @@ class TruckModel{
 	Schedule schedule;
 	String description;
 	List<Tag> tags;
+  bool isOpen;
 
 	TruckModel({this.username, this.displayedName, this.location, 
-    this.schedule, this.description='', this.tags=const []});
+    this.schedule, this.description='', this.tags=const [],
+    this.isOpen});
+
 	factory TruckModel.fromJson(Map<String, dynamic> json) {
 		return new TruckModel(
 				username: json['username'],
@@ -19,6 +22,7 @@ class TruckModel{
 				schedule: Schedule.fromJson(json['schedule']),
 				description: json['description'],
 				tags: TagHelper.tagsFromList(json['tags']),
+        isOpen: json['is_open'],
 			);
 	}
 }
@@ -100,8 +104,8 @@ class Schedule {
 	String end;
 	Schedule({this.start,this.end});
 	factory Schedule.fromJson(Map<String, dynamic> json) {
-		return new Schedule(start: new DateFormat("hh:mm").format(DateTime.parse(json['start'])), 
-			end: new DateFormat("hh:mm").format(DateTime.parse(json['end'])));
+		return new Schedule(start: new DateFormat("hh:mm a").format(DateTime.parse(json['start'])), 
+			end: new DateFormat("hh:mm a").format(DateTime.parse(json['end'])));
 	}
 	String toString() {
 		return '${this.start} - ${this.end}';

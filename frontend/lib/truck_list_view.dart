@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
+import 'utils/Utils.dart';
 
 class FoodTruckListView extends StatefulWidget {
   static String id = "foodtrucklistview";
@@ -38,6 +39,8 @@ class TruckListState extends State<FoodTruckListView> {
   }
 
   Widget _buildTruckCard(TruckModel truck) {
+  	Location center = Location(lat: 40.1129, lng: -88.2262);
+  	double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, center.lat, center.lng); 
     return Container(
            padding: EdgeInsets.fromLTRB(10,10,10,0),
            height: 220,
@@ -63,7 +66,7 @@ class TruckListState extends State<FoodTruckListView> {
 	                            crossAxisAlignment: CrossAxisAlignment.start,
 	                           children: <Widget>[
 	                             Text("schedule: ${truck.schedule.start} - ${truck.schedule.end}"),
-	                             Text("location: ${truck.location.lat}, ${truck.location.lng}" ),
+	                             Text("${distance.toStringAsFixed(1)} mi away" ),
 	                           ], // WidgetList of Column
 	                         ),//Column
 	                       Image(
