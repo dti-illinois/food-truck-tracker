@@ -43,3 +43,8 @@ class FavTruck(Resource):
     def get(self, username):
         """get a vendor with its identifier"""
         return get_fav_trucks(username)
+
+    @api.doc('update favorite vendors of user')
+    def put(self, username):
+        return update_fav_trucks(username, request.json['fav_trucks'])
+        

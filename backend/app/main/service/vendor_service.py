@@ -25,6 +25,18 @@ def get_fav_trucks(username):
 	except User.DoesNotExist:
 		return []
 
+def update_fav_trucks(username, truck_usernames):
+	try:
+		user = User.objects.get(username=username)
+		trucks = Vendor.objects.filter(username__in=truck_usernames)
+		user.fav_trucks = trucks 
+		user.save()
+		return "user {} is updated".format(username)
+	except User.DoesNotExist:
+		return "user {} is not found".format(username)
+	except Vendor.DoesNotExist:
+		return "contain invalid truck usernames"
+
 # The function takes in vendor as a json object 
 def add_vendor_info(vendor):
 	start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
