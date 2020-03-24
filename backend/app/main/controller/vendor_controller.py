@@ -34,3 +34,12 @@ class Vendor(Resource):
             api.abort(404)
         else:
             return vendor
+
+@api.route('/fav_trucks/<username>')
+@api.param('username', 'The User identifier')
+class FavTruck(Resource):
+    @api.doc('get favorite vendors of user')
+    @api.marshal_list_with(_vendor)
+    def get(self, username):
+        """get a vendor with its identifier"""
+        return get_fav_trucks(username)
