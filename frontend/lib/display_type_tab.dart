@@ -1,3 +1,11 @@
+/* 
+ * Title: Illinois Rokwire Source Code 
+ * Author: Illinois Rokwire
+ * Date: 2019
+ * Availability: https://github.com/rokwire/illinois-client/blob/develop/lib/ui/widgets/ExploreViewTypeTab.dart
+ */
+
+
 import 'package:flutter/material.dart';
 import 'utils/Utils.dart';
 

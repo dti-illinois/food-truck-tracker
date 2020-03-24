@@ -1,3 +1,8 @@
+/* Title: Illinois Rokwire Source Code 
+ * Author: Illinois Rokwire
+ * Date: 2019
+ * Availability: https://github.com/rokwire/illinois-client/blob/develop/lib/utils/Utils.dart
+ */
 import 'dart:math';
 import 'package:flutter/material.dart';
 
