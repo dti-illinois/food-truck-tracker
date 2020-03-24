@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
+import 'utils/Utils.dart';
 
 class FoodTruckListView extends StatefulWidget {
   static String id = "foodtrucklistview";
   List<TruckModel> trucks;
-  FoodTruckListView(this.trucks);
+  Location center;
+  FoodTruckListView(this.trucks, this.center);
 
   @override
   TruckListState createState() => TruckListState(); 
@@ -37,9 +39,33 @@ class TruckListState extends State<FoodTruckListView> {
   	Navigator.pushNamed(context, 'truck_detail', arguments: truck);
   }
 
+  Widget _buildTags(TruckModel truck) {
+  	List<Widget> widgetTags = [];
+  	for(String tag in TagHelper.tagsToList(truck.tags)) {
+  		widgetTags.add(Container(
+  				alignment: Alignment.center,
+  				padding: EdgeInsets.symmetric(horizontal: 20),
+  				margin: EdgeInsets.only(left: 10),
+  				height: 30,
+  				decoration: BoxDecoration(
+  					color: UiColors.darkBlueGrey,
+  					borderRadius: BorderRadius.circular(30),
+  				), // BoxDecoration
+  				child: Text(
+  					tag, style: TextStyle(
+  					color: UiColors.white
+  					), // TextStyle
+  				) // Text
+  		)); // Container
+  	}
+  	return Row(crossAxisAlignment: CrossAxisAlignment.center, children: widgetTags);
+  }
+
   Widget _buildTruckCard(TruckModel truck) {
+  	double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
+  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
     return Container(
-           padding: EdgeInsets.fromLTRB(10,10,10,0),
+           padding: EdgeInsets.fromLTRB(10,10,10,10),
            height: 220,
            width: double.maxFinite,
            child: Card(
@@ -62,8 +88,8 @@ class TruckListState extends State<FoodTruckListView> {
 	                        Column(
 	                            crossAxisAlignment: CrossAxisAlignment.start,
 	                           children: <Widget>[
-	                             Text("schedule: ${truck.schedule.start} - ${truck.schedule.end}"),
-	                             Text("location: ${truck.location.lat}, ${truck.location.lng}" ),
+	                             Text(scheduleString),
+	                             Text("${distance.toStringAsFixed(1)} mi away" ),
 	                           ], // WidgetList of Column
 	                         ),//Column
 	                       Image(
@@ -76,12 +102,7 @@ class TruckListState extends State<FoodTruckListView> {
 	                     mainAxisAlignment: MainAxisAlignment.spaceBetween
 	                   ), 
 	                   Divider(height: 2, color: Colors.black87),
-	                   Row(
-	                     children: <Widget>[
-	                       
-	                     ],
-	                     mainAxisAlignment: MainAxisAlignment.spaceBetween
-	                   ), 
+	                   _buildTags(truck),
 	                 ], // Widget list
 	               ), // Column
 	           ), // Padding

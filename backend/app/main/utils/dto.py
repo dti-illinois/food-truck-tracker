@@ -16,6 +16,7 @@ class VendorDto:
         'location': fields.Nested(location, description='vendor location'),
         'schedule': fields.Nested(schedule, description='vendor schedule'),
         'tags': fields.List(fields.String),
+        'is_open': fields.Boolean(readonly=True, description='is vendor open'),
     })
     vendor_detail = api.inherit('vendor_detail', vendor, {
         'description': fields.String(description='vendor description'),
