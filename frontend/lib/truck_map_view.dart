@@ -19,7 +19,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
 
   @override
   void initState() {
-    widget.trucksStream.listen((trucks) {
+    widget.trucksStream.asBroadcastStream().listen((trucks) {
       print("_updateMarkers is called");
       setState(() {
         _buildMarkers(trucks);
@@ -47,7 +47,6 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
           );
           markers.add(marker);
         }
-        _markers = markers;
       });
   }
 

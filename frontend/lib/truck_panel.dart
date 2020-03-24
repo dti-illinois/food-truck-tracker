@@ -36,6 +36,11 @@ class TruckPanelState extends State<TruckPanel> {
 	bool _filterOptionsVisible; 
 	ScrollController _scrollController = ScrollController();
 
+	@override
+	void dispose() {
+	  _truckController.close(); //Streams must be closed when not needed
+	  super.dispose();
+	}
 
 	@override 
 	void initState() {
