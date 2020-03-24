@@ -34,6 +34,7 @@ class TruckPanelState extends State<TruckPanel> {
 	List<String> _filterTagValues;
 	List<String> _filterWorkTimeValues;
 	bool _filterOptionsVisible; 
+	Location _location = Location(lat: 40.1129, lng: -88.2262); 
 	ScrollController _scrollController = ScrollController();
 
 	@override
@@ -128,7 +129,7 @@ class TruckPanelState extends State<TruckPanel> {
 		return Visibility(
 		    visible: (_displayType == ListMapDisplayType.List),
 		    child: Container(
-		        color: UiColors.illinoisWhiteBackground, child: FoodTruckListView(_trucks)));
+		        color: UiColors.illinoisWhiteBackground, child: FoodTruckListView(_trucks, _location)));
 	}
 
 	Widget _buildMapView() {
@@ -136,7 +137,7 @@ class TruckPanelState extends State<TruckPanel> {
 			return _buildLoadingView(); 
 		}
 		return Container(
-				child: FoodTruckMapView(Location(lat: 40.1129, lng: -88.2262), _truckController.stream), 
+				child: FoodTruckMapView(_location, _truckController.stream), 
 		);
 	}
 

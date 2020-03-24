@@ -6,7 +6,8 @@ import 'utils/Utils.dart';
 class FoodTruckListView extends StatefulWidget {
   static String id = "foodtrucklistview";
   List<TruckModel> trucks;
-  FoodTruckListView(this.trucks);
+  Location center;
+  FoodTruckListView(this.trucks, this.center);
 
   @override
   TruckListState createState() => TruckListState(); 
@@ -61,8 +62,7 @@ class TruckListState extends State<FoodTruckListView> {
   }
 
   Widget _buildTruckCard(TruckModel truck) {
-  	Location center = Location(lat: 40.1129, lng: -88.2262);
-  	double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, center.lat, center.lng); 
+  	double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
   	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
     return Container(
            padding: EdgeInsets.fromLTRB(10,10,10,10),
