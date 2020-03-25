@@ -54,3 +54,17 @@ class Vendor(Resource):
         req_data['username'] = vendor_username
         post_vendor(req_data)
         return get_vendor_by_username(vendor_username)
+      
+@api.route('/fav_trucks/<username>')
+@api.param('username', 'The User identifier')
+class FavTruck(Resource):
+    @api.doc('get favorite vendors of user')
+    @api.marshal_list_with(_vendor)
+    def get(self, username):
+        """get a vendor with its identifier"""
+        return get_fav_trucks(username)
+
+    @api.doc('update favorite vendors of user')
+    def put(self, username):
+        return update_fav_trucks(username, request.json['fav_trucks'])
+        
