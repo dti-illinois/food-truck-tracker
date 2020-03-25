@@ -10,7 +10,7 @@ class Schedule(db.EmbeddedDocument):
 
 class Vendor(db.Document):
     username = db.StringField(required=True, unique=True)
-    displayed_name = db.StringField(required=True)
+    displayed_name = db.StringField(required=True, unique=True)
     location = db.EmbeddedDocumentField(Location)
     schedule = db.EmbeddedDocumentField(Schedule)
     description = db.StringField()

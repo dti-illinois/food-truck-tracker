@@ -1,10 +1,10 @@
-from ..model.vendor_model import Vendor
+from ..model.vendor_model import *
 from ..model.user_model import User 
 from datetime import date, datetime, timezone
-from flask import json 
-from bson import json_util  
+from bson import json_util
 
 ISO_FORMAT = 'YYYY-MM-DDTHH:MM:SS'
+STRPTIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 def get_all_vendors():
 	ret = json_util.loads(Vendor.objects().to_json())
@@ -41,8 +41,23 @@ def update_fav_trucks(username, truck_usernames):
 def add_vendor_info(vendor):
 	start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
 	now = datetime.now(timezone.utc).time()
-	if now >= start and now <= end:
+	if start <= now <= end:
 		vendor['is_open'] = True
 	else:
 		vendor['is_open'] = False
-	return vendor 
+	return vendor
+
+def post_vendor(vendor):
+	vendor_document = Vendor()
+	vendor_document.username = vendor['username']
+	vendor_document.displayed_name = vendor['displayed_name']
+	vendor_document.location = Location()
+	vendor_document.location.lat = vendor['location']['lat']
+	vendor_document.location.lng = vendor['location']['lng']
+	vendor_document.schedule = Schedule()
+	vendor_document.schedule.end = datetime.strptime(vendor['schedule']['end'], STRPTIME_FORMAT)
+	vendor_document.schedule.start = datetime.strptime(vendor['schedule']['start'], STRPTIME_FORMAT)
+	vendor_document.description = vendor['description']
+	vendor_document.tags = vendor['tags']
+	vendor_document = vendor_document.save()
+	return json_util.loads(vendor_document.to_json())
