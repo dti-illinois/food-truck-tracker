@@ -6,7 +6,7 @@ var host = 'http://0.0.0.0:5000';
 var USER_URL = host + "/user"; 
 
 Future<UserModel> getUser(String username) async {
-  final response = await http.get(USER_URL + username);
+  final response = await http.get(USER_URL + "/" + username);
   if (response.statusCode == 200) {
  	return UserModel.fromJson(jsonDecode(response.body));
   } else {

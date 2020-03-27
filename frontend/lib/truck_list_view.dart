@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
 import 'utils/Utils.dart';
+import 'user_model.dart';
 
 class FoodTruckListView extends StatefulWidget {
   static String id = "foodtrucklistview";
@@ -35,13 +36,16 @@ class TruckListState extends State<FoodTruckListView> {
   }
 
   void _onCardTap(TruckModel truck) {
-  	print(truck);
   	Navigator.pushNamed(context, 'truck_detail', arguments: truck);
   }
 
   Widget _buildTags(TruckModel truck) {
   	List<Widget> widgetTags = [];
   	for(String tag in TagHelper.tagsToList(truck.tags)) {
+  		if(tag?.isEmpty ?? true) {
+  			continue;
+  		}
+  		print("tag: " + tag);
   		widgetTags.add(Container(
   				alignment: Alignment.center,
   				padding: EdgeInsets.symmetric(horizontal: 20),
@@ -64,6 +68,7 @@ class TruckListState extends State<FoodTruckListView> {
   Widget _buildTruckCard(TruckModel truck) {
   	double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
   	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
+    bool isFavorite = User().isFavTruck(truck.username);
     return Container(
            padding: EdgeInsets.fromLTRB(10,10,10,10),
            height: 220,
@@ -79,7 +84,11 @@ class TruckListState extends State<FoodTruckListView> {
 	                   Row(
 	                     children: <Widget>[
 	                       Text(truck.displayedName), 
-	                       IconButton(icon: new Icon(Icons.star)),
+	                       Semantics(
+		                    label: isFavorite ? 'Remove From Favorites': 'Add To Favorites',
+		                    button: true,
+		                    child:Padding(padding: EdgeInsets.all(3), 
+		                      child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))) // Semantic
 	                     ],
 	                     mainAxisAlignment: MainAxisAlignment.spaceBetween
 	                   ), // Row

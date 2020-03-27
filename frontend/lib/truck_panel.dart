@@ -39,7 +39,6 @@ class TruckPanelState extends State<TruckPanel> {
 	bool _filterOptionsVisible; 
 	Location _location = Location(lat: LOCATION_LAT, lng: LOCATION_LNG); 
 	ScrollController _scrollController = ScrollController();
-	UserModel _user; 
 
 	@override
 	void dispose() {
@@ -51,17 +50,7 @@ class TruckPanelState extends State<TruckPanel> {
 	void initState() {
 		_initFilters();
 		_loadTruckList();
-		_loadUser();
 		super.initState();
-	}
-
-	void _loadUser() {
-		getUser(USERNAME).then((UserModel user) {
-			_refresh(() {
-					print(user.username);
-					_user = user;
-				});
-		});
 	}
 
 	void _loadTruckList() {
