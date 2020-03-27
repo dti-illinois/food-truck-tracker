@@ -15,7 +15,9 @@ class User {
 	bool isFavTruck(String truckname) {
 	  	return _userModel?.isFavTruck(truckname) ?? false;
 	  }
-
+	void toggleFavTruck(String truckname) {
+		_userModel?.toggleFavTruck(truckname);
+	}
 }
 
 class UserModel {	
@@ -35,7 +37,6 @@ class UserModel {
     if (json == null) {
       return null;
 	}
-	print(json['fav_trucks']);
     return new UserModel(
         username: json['username'],
         favTrucks: favTrucksFromList(json['fav_trucks']),
