@@ -3,6 +3,7 @@ werkzeug.cached_property = werkzeug.utils.cached_property
 from flask_restx import Api
 from flask import Blueprint
 from .main.controller.vendor_controller import api as vendor_ns
+from .main.controller.user_controller import api as user_ns
 
 blueprint = Blueprint('api', __name__)
 
@@ -12,3 +13,4 @@ api = Api(blueprint,
           description='a boilerplate for flask restplus web service'
           )
 api.add_namespace(vendor_ns, path='/vendor')
+api.add_namespace(user_ns, path='/user')

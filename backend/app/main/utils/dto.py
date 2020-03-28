@@ -21,3 +21,10 @@ class VendorDto:
     vendor_detail = api.inherit('vendor_detail', vendor, {
         'description': fields.String(description='vendor description'),
     })
+
+class UserDto:
+    api = Namespace('user', description='user related operations')
+    user_detail = api.model('user', {
+            'username': fields.String(description='user username'),
+            'fav_trucks': fields.List(fields.String()),
+        })

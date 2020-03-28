@@ -52,6 +52,7 @@ flutter:
      - images/icon-search.png
      - images/chevron-left-white.png
      - images/icon-star.png
+     - images/icon-star-selected.png
      - images/icon-location.png
      - images/icon-time.png
      - images/icon-up.png
