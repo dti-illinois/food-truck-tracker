@@ -27,7 +27,7 @@ class TruckModel{
 	}
 }
 
-enum Tag { Savory, Sweet, Vegetarian }
+enum Tag { Savory, Sweet, Vegetarian, Free }
 
 class TagHelper {
   static String tagToString(Tag tag) {
@@ -35,6 +35,7 @@ class TagHelper {
       case Tag.Savory: return 'Savory';
       case Tag.Sweet: return 'Sweet';
       case Tag.Vegetarian:  return 'Vegetarian';
+      case Tag.Free:  return 'Free';
       default:                      return null;
     }
   }

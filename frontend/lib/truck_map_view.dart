@@ -20,8 +20,6 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
   @override
   void initState() {
     widget.trucksStream.asBroadcastStream().listen((trucks) {
-      print("_updateMarkers is called");
-      print(trucks);
         _buildMarkers(trucks);
     });
     super.initState();
@@ -29,11 +27,11 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    _buildMarkers([]);
   }
 
   void _buildMarkers(List<TruckModel> trucks) {
     setState(() {
+      // Pretty hacky, need to change later
         List<Marker> markers = [];
         for (final truck in trucks) {
           final marker = Marker(
@@ -53,8 +51,6 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
 
   @override
   Widget build(BuildContext context) {
-    print("markers");
-    print(_markers);
     LatLng gcenter = LatLng(widget.center.lat, widget.center.lng);
     return MaterialApp(
       home: Scaffold(
