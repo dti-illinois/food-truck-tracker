@@ -20,6 +20,9 @@ class TruckCardState extends State<TruckCard> {
 	@override
 	void initState() {
 		_isFavorite = User().isFavTruck(widget.truck.username);
+		User().registerSubscriberOfFav(() {
+			this.setState(() {_isFavorite = User().isFavTruck(widget.truck.username);});
+		});
 		print("cardinit ${widget.truck.username} ${_isFavorite}");
 		super.initState();
 	}
@@ -51,9 +54,6 @@ class TruckCardState extends State<TruckCard> {
 
 	 void toggleFavTruck(String truckUsername) {
 	  	User().toggleFavTruck(truckUsername);
-	  	this.setState(() {
-	  		_isFavorite = !_isFavorite;
-	  		});
 	  }
 	@override
 	Widget build(BuildContext context) {

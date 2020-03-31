@@ -12,6 +12,7 @@ class User {
   static final User _instance = User._internal();
   UserModel _userModel;
   User._internal();
+  List<Function> _favSubscribers = [];
 
   factory User() {
     return _instance;
@@ -26,9 +27,18 @@ class User {
   bool isFavTruck(String truckname) {
       return _userModel?.isFavTruck(truckname) ?? false;
     }
-    
+
   void toggleFavTruck(String truckname) {
     _userModel?.toggleFavTruck(truckname);
+    _notifySubscriberOfFav();
+  }
+
+  void registerSubscriberOfFav(Function onFavChange) {
+    _favSubscribers.add(onFavChange);
+  }
+
+  void _notifySubscriberOfFav() {
+    _favSubscribers.forEach((func) => func());
   }
 }
 
