@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'truck_model.dart';
 import 'user_model.dart';
+import 'user_service.dart';
 import 'utils/Utils.dart';
 
 class TruckCard extends StatefulWidget {
@@ -19,6 +20,7 @@ class TruckCardState extends State<TruckCard> {
 	@override
 	void initState() {
 		_isFavorite = User().isFavTruck(widget.truck.username);
+		print("cardinit ${widget.truck.username} ${_isFavorite}");
 		super.initState();
 	}
 
@@ -65,7 +67,7 @@ class TruckCardState extends State<TruckCard> {
 	           child: Card(
 	             elevation: 5,
 	             child: InkWell(
-	               onTap: () => widget.onCardTap,
+	               onTap: widget.onCardTap,
 		           child: Padding(
 		             padding: EdgeInsets.only(left: 10, right: 10),
 		             child: Column(

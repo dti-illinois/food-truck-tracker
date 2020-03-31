@@ -21,9 +21,8 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
   void initState() {
     widget.trucksStream.asBroadcastStream().listen((trucks) {
       print("_updateMarkers is called");
-      setState(() {
+      print(trucks);
         _buildMarkers(trucks);
-        });
     });
     super.initState();
   }
@@ -47,12 +46,15 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
           );
           markers.add(marker);
         }
+        _markers = markers;
       });
   }
 
 
   @override
   Widget build(BuildContext context) {
+    print("markers");
+    print(_markers);
     LatLng gcenter = LatLng(widget.center.lat, widget.center.lng);
     return MaterialApp(
       home: Scaffold(

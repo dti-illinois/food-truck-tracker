@@ -6,7 +6,7 @@ import 'truck_list_view.dart';
 import 'truck_map_view.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
-import 'temp_data.dart';
+import 'config.dart';
 import 'utils/Utils.dart';
 
 class _PanelData {

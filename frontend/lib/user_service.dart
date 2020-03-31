@@ -1,9 +1,37 @@
+import 'config.dart';
 import "user_model.dart";
-import "package:http/http.dart" as http;
+
 import 'dart:convert';
+import "package:http/http.dart" as http;
 
 var host = 'http://0.0.0.0:5000';
 var USER_URL = host + "/user"; 
+
+
+class User {
+  static final User _instance = User._internal();
+  UserModel _userModel;
+  User._internal();
+
+  factory User() {
+    return _instance;
+  }
+
+  Future<void> initService() async {
+    await getUser(USERNAME).then((UserModel user) {
+      _userModel = user;
+    });
+  }
+
+  bool isFavTruck(String truckname) {
+      return _userModel?.isFavTruck(truckname) ?? false;
+    }
+    
+  void toggleFavTruck(String truckname) {
+    _userModel?.toggleFavTruck(truckname);
+  }
+}
+
 
 Future<UserModel> getUser(String username) async {
   final response = await http.get(USER_URL + "/" + username);

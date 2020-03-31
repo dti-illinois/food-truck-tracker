@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 import 'header_bar.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
+import 'user_model.dart';
+import 'user_service.dart';
 import 'utils/Utils.dart';
+
+class TruckDetailArgument {
+  final TruckModel truck;
+  final Location center;
+  TruckDetailArgument(this.truck, this.center);
+}
 
 class TruckDetailView extends StatefulWidget {
   final TruckModel truck;
-  TruckDetailView({this.truck});
+  Location center;
+  TruckDetailView({this.truck, this.center});
 
   @override
   _TruckDetailState createState() =>
@@ -18,9 +27,11 @@ class _TruckDetailState extends State<TruckDetailView> {
   _TruckDetailState(this.truck);
 
   bool _isTruckLoading = false;
+  bool _isFavorite;
 
   @override
   void initState() {
+    _isFavorite = User().isFavTruck(widget.truck.username);
     _loadFoodTruckDetail();
     super.initState();
   }
@@ -35,9 +46,15 @@ class _TruckDetailState extends State<TruckDetailView> {
       });
   }
 
+  void _toggleFavTruck() {
+      User().toggleFavTruck(truck.username);
+      this.setState(() {
+        _isFavorite = !_isFavorite;
+        });
+  }
+
    Widget _truckTitle() {
     bool starVisible = true; // TODO: depends on user type
-    bool isFavorite = false; // TODO: depends on user class 
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -55,14 +72,12 @@ class _TruckDetailState extends State<TruckDetailView> {
             ),
             Visibility(visible: starVisible,child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: (){
-                	// TODO: implement "like" function   
-                },
+                onTap: _toggleFavTruck,
                 child: Semantics(
-                    label: isFavorite ? 'Remove From Favorites': 'Add To Favorites',
+                    label: _isFavorite ? 'Remove From Favorites': 'Add To Favorites',
                     button: true,
                     child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
-                      child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
+                      child: Image.asset(_isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
             ),),
           ],
         ));
@@ -97,16 +112,21 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  "${truck.location.lat}, ${truck.location.lng}";
+    double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
+  	String locationText =  "${distance.toStringAsFixed(1)} mi (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
   	return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
-                ),
+                Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child:Image.asset('images/icon-location.png'),
+                    ),
+                    height: 20,
+                  ),
+                
                 Expanded(child: Text(locationText,
                     style: TextStyle(
                         fontFamily: 'ProximaNovaMedium',

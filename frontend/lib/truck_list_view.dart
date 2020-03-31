@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'truck_card.dart';
+import 'truck_detail.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
 import 'utils/Utils.dart';
@@ -38,7 +39,7 @@ class TruckListState extends State<FoodTruckListView> {
   }
 
   void _onCardTap(TruckModel truck) {
-  	Navigator.pushNamed(context, 'truck_detail', arguments: truck);
+  	Navigator.pushNamed(context, 'truck_detail', arguments: TruckDetailArgument(truck, widget.center));
   }
 
   @override

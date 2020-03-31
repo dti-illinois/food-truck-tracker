@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'truck_panel.dart';
 import 'truck_detail.dart';
+import 'user_service.dart';
 
-void main() => runApp(FoodTruckTracker());
+void main() async {
+  await _initServices();
+  runApp(FoodTruckTracker());
+}
+
+void _initServices() async {
+  await User().initService();
+}
 
 class FoodTruckTracker extends StatelessWidget {
   // This widget is the root of your application.
@@ -13,9 +21,10 @@ class FoodTruckTracker extends StatelessWidget {
       initialRoute: 'trucks',
       onGenerateRoute: (settings) {
           if (settings.name == "truck_detail") {
+            final TruckDetailArgument args = settings.arguments;
             return MaterialPageRoute(
               builder: (context) {
-                return TruckDetailView(truck: settings.arguments);
+                return TruckDetailView(truck: args.truck, center: args.center);
               },
             );
           }
