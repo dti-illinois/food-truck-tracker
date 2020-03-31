@@ -33,7 +33,7 @@ class TruckCardState extends State<TruckCard> {
   		widgetTags.add(Container(
   				alignment: Alignment.center,
   				padding: EdgeInsets.symmetric(horizontal: 20),
-  				margin: EdgeInsets.only(left: 10),
+  				margin: EdgeInsets.only(left: 10, top: 10),
   				height: 30,
   				decoration: BoxDecoration(
   					color: UiColors.darkBlueGrey,
@@ -62,20 +62,23 @@ class TruckCardState extends State<TruckCard> {
 	  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
 	    return Container(
 	           padding: EdgeInsets.fromLTRB(10,10,10,10),
-	           height: 220,
+	           height: 210,
 	           width: double.maxFinite,
 	           child: Card(
 	             elevation: 5,
 	             child: InkWell(
 	               onTap: widget.onCardTap,
 		           child: Padding(
-		             padding: EdgeInsets.only(left: 10, right: 10),
+		             padding: EdgeInsets.only(left: 10, right: 10, top: 10),
 		             child: Column(
 		                 children: <Widget>[
 		                   Row(
 		                     children: <Widget>[
-		                       Text(truck.displayedName), 
-
+		                       Text(truck.displayedName, 
+		                       		style: TextStyle(
+				                    fontSize: 18,
+				                    color: UiColors.darkSlateBlueTwo,
+				                    letterSpacing: 1),), 
 		                       GestureDetector(
 					              onTap: () {toggleFavTruck(truck.username);},
 					              child: Semantics(
