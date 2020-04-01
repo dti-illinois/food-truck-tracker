@@ -2,17 +2,18 @@ import 'config.dart';
 import "user_model.dart";
 
 import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 import "package:http/http.dart" as http;
 
 var host = 'http://0.0.0.0:5000';
 var USER_URL = host + "/user"; 
 
 
-class User {
+class User extends ChangeNotifier {
   static final User _instance = User._internal();
   UserModel _userModel;
   User._internal();
-  List<Function> _favSubscribers = [];
 
   factory User() {
     return _instance;
@@ -30,15 +31,7 @@ class User {
 
   void toggleFavTruck(String truckname) {
     _userModel?.toggleFavTruck(truckname);
-    _notifySubscriberOfFav();
-  }
-
-  void registerSubscriberOfFav(Function onFavChange) {
-    _favSubscribers.add(onFavChange);
-  }
-
-  void _notifySubscriberOfFav() {
-    _favSubscribers.forEach((func) => func());
+    notifyListeners();
   }
 }
 

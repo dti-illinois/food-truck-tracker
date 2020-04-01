@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'truck_panel.dart';
 import 'truck_detail.dart';
 import 'user_service.dart';
 
 void main() async {
   await _initServices();
-  runApp(FoodTruckTracker());
+  runApp(
+    ChangeNotifierProvider(
+        child: FoodTruckTracker(),
+        create: (context) => User(),
+      )
+    );
 }
 
 void _initServices() async {

@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 
 class UserModel {	
 	final String username;

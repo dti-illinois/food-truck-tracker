@@ -32,11 +32,19 @@ class _TruckDetailState extends State<TruckDetailView> {
   @override
   void initState() {
     _isFavorite = User().isFavTruck(widget.truck.username);
-    User().registerSubscriberOfFav(() {
-      this.setState(() {_isFavorite = User().isFavTruck(widget.truck.username);});
-    });
+    User().addListener(userFavSubscriber);
     _loadFoodTruckDetail();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    User().removeListener(userFavSubscriber);
+    super.dispose();
+  }
+
+  void userFavSubscriber() {
+    this.setState(() {_isFavorite = User().isFavTruck(widget.truck.username);});
   }
 
   void _loadFoodTruckDetail() {
