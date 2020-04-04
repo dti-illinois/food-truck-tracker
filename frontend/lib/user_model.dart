@@ -45,20 +45,14 @@ class UserModel {
   }
 
   void toggleFavTruck(String truckname) {
-    print(favTrucks);
   	if(!isFavTruck(truckname)) {
-      print("adding");
   		favTrucks.add(truckname);
   	} else {
-      print("removing");
   		favTrucks.remove(truckname);
   	}
-    print("after");
-    print(favTrucks);
   }
 
   bool isFavTruck(String truckname) {
-    print("${favTrucks} ${truckname} ${favTrucks.contains(truckname)}");
   	return favTrucks.contains(truckname);
   }
 }
