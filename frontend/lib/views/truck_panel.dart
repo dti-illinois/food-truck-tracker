@@ -18,6 +18,7 @@ class _PanelData {
 
 
 class TruckPanel extends StatefulWidget {
+	static String id = "trucks";
 	_PanelData _data = _PanelData(); 
 
 	@override

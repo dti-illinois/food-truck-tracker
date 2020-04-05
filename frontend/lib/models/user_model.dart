@@ -1,7 +1,10 @@
 import 'package:provider/provider.dart';
 
+enum UserType { Vendor, User, Guest }
+
 class UserModel {	
 	final String username;
+  UserType _type;
 	Set<String> favTrucks; 
 	
 	UserModel({this.username, this.favTrucks});
@@ -23,9 +26,13 @@ class UserModel {
     );
   }
 
-  // String get username {
-  // 	return _username;
-  // }
+  UserType get userType {
+  	return _type;
+  }
+
+  void set userType(UserType type) {
+    _type = type;
+  }
 
   // Set<String> get favTrucks {
   // 	return _favTrucks;

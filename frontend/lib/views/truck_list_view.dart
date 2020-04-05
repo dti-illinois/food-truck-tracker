@@ -40,7 +40,7 @@ class TruckListState extends State<FoodTruckListView> {
   }
 
   void _onCardTap(TruckModel truck) {
-  	Navigator.pushNamed(context, 'truck_detail', arguments: TruckDetailArgument(truck, widget.center));
+  	Navigator.pushNamed(context, TruckDetailView.id, arguments: TruckDetailArgument(truck, widget.center));
   }
 
   @override

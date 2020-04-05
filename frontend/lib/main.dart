@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/user_service.dart';
+import 'views/login_view.dart';
 import 'views/truck_panel.dart';
 import 'views/truck_detail.dart';
 
@@ -24,9 +25,9 @@ class FoodTruckTracker extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Rokwire FoodTruckTracker',
-      initialRoute: 'trucks',
+      initialRoute: LoginView.id,
       onGenerateRoute: (settings) {
-          if (settings.name == "truck_detail") {
+          if (settings.name == TruckDetailView.id) {
             final TruckDetailArgument args = settings.arguments;
             return MaterialPageRoute(
               builder: (context) {
@@ -36,10 +37,11 @@ class FoodTruckTracker extends StatelessWidget {
           }
       },
       routes: {
-        'trucks': (context) => TruckPanel(),
+        TruckPanel.id: (context) => TruckPanel(),
+        LoginView.id: (context) => LoginView(),
       },
       theme: ThemeData(
-          primaryColor: Colors.purple,
+          primaryColor: Color(0xff002855),
       ),
     );
   }

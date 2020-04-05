@@ -20,9 +20,10 @@ class User extends ChangeNotifier {
   }
 
   Future<void> initService() async {
-    await getUser(USERNAME).then((UserModel user) {
-      _userModel = user;
-    });
+    // TODO: treat as default user 
+    // await getUser(USERNAME).then((UserModel user) {
+    //   _userModel = user;
+    // });
   }
 
   bool isFavTruck(String truckname) {
@@ -33,6 +34,22 @@ class User extends ChangeNotifier {
     _userModel?.toggleFavTruck(truckname);
     notifyListeners();
   }
+
+  UserType get userType {
+    return _userModel.userType;
+  }
+
+  void set userType(UserType type) {
+   _userModel.userType = type;
+  }
+
+  Future<void> updateUser(String username, UserType type) async {
+    await getUser(username).then((UserModel user) {
+          _userModel = user;
+        });
+    _userModel.userType = type; // TODO: this could be recorded in the database 
+  }
+
 }
 
 

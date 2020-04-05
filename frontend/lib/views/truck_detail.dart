@@ -14,6 +14,7 @@ class TruckDetailArgument {
 }
 
 class TruckDetailView extends StatefulWidget {
+  static String id = "truck_detail";
   final TruckModel truck;
   Location center;
   TruckDetailView({this.truck, this.center});
