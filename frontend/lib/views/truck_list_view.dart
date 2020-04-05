@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'truck_card.dart';
-import 'truck_detail.dart';
-import 'truck_model.dart';
-import 'truck_service.dart';
-import 'utils/Utils.dart';
-import 'user_model.dart';
+
+import '../models/truck_model.dart';
+import '../models/user_model.dart';
+import '../services/truck_service.dart';
+import '../utils/Utils.dart';
+import '../views/truck_detail.dart';
+import '../widgets/truck_card.dart';
 
 class FoodTruckListView extends StatefulWidget {
   static String id = "foodtrucklistview";

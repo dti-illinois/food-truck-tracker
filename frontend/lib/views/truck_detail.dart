@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'header_bar.dart';
-import 'truck_model.dart';
-import 'truck_service.dart';
-import 'user_model.dart';
-import 'user_service.dart';
-import 'utils/Utils.dart';
+
+import '../models/truck_model.dart';
+import '../models/user_model.dart';
+import '../services/truck_service.dart';
+import '../services/user_service.dart';
+import '../utils/Utils.dart';
+import '../widgets/header_bar.dart';
 
 class TruckDetailArgument {
   final TruckModel truck;

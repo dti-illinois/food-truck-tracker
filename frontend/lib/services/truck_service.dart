@@ -1,11 +1,10 @@
-import "truck_model.dart";
 import "package:http/http.dart" as http;
 import 'dart:convert';
+import "../models/truck_model.dart";
 
 var host = 'http://0.0.0.0:5000';
 
 Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
-	print(tag);
   final response = await http.get(host+'/vendor/');
   if (response.statusCode == 200) {
  	List<Map<String, dynamic>> l = List.from(jsonDecode(response.body));

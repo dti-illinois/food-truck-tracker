@@ -1,5 +1,5 @@
-import 'config.dart';
-import "user_model.dart";
+import '../config.dart';
+import "../models/user_model.dart";
 
 import 'dart:convert';
 import 'package:provider/provider.dart';

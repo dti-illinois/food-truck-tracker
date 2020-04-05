@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'truck_model.dart';
-import 'user_model.dart';
-import 'user_service.dart';
-import 'utils/Utils.dart';
+import '../models/truck_model.dart';
+import '../models/user_model.dart';
+import '../services/user_service.dart';
+import '../utils/Utils.dart';
 
 class TruckCard extends StatefulWidget {
 	  TruckModel truck;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'truck_panel.dart';
-import 'truck_detail.dart';
-import 'user_service.dart';
+import 'services/user_service.dart';
+import 'views/truck_panel.dart';
+import 'views/truck_detail.dart';
 
 void main() async {
   await _initServices();
