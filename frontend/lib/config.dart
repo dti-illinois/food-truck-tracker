@@ -4,5 +4,7 @@ double LOCATION_LAT = 40.1129;
 double LOCATION_LNG = -88.2262;
 
 String USERNAME = "apple";
+String VENDOR_USERNAME = "cracked";
+
 
 String HOST = "http://0.0.0.0:5000";

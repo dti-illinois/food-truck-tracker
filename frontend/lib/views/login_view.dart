@@ -3,15 +3,22 @@ import '../config.dart';
 import '../utils/Utils.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
+import '../views/truck_management_view.dart';
 import '../views/truck_panel.dart';
 
 class LoginView extends StatelessWidget {
 
 	static String id = "login";
 
-	void _onLogin(BuildContext context, UserType type) {
-		User().updateUser(USERNAME, type);
-		Navigator.pushNamed(context, TruckPanel.id);
+	void _onLogin(BuildContext context, String username, UserType type) {
+		if (type == UserType.User) {
+			User().updateUser(username, type);
+			Navigator.pushNamed(context, TruckPanel.id);
+		} else {
+			// TODO: pass in vendor username to get corresponding view
+			Navigator.pushNamed(context, TruckManagementView.id, arguments: username);
+		} // TODO: handle guest login 
+
 	}
 
 	@override
@@ -32,7 +39,7 @@ class LoginView extends StatelessWidget {
 								 textAlign: TextAlign.center,),
 							GestureDetector(
 								onTap: () {
-									_onLogin(context, UserType.Vendor);
+									_onLogin(context, VENDOR_USERNAME, UserType.Vendor);
 								},
 								child: Container(
 						          color: UiColors.illinoisTransparentOrange05,
@@ -43,7 +50,7 @@ class LoginView extends StatelessWidget {
 							), // GestureDetector
 							GestureDetector(
 								onTap: () {
-									_onLogin(context, UserType.User);
+									_onLogin(context, USERNAME, UserType.User);
 								},
 								child: Container(
 						          color: UiColors.illinoisTransparentOrange05,

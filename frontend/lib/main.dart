@@ -4,6 +4,7 @@ import 'services/user_service.dart';
 import 'views/login_view.dart';
 import 'views/truck_panel.dart';
 import 'views/truck_detail.dart';
+import 'views/truck_management_view.dart';
 
 void main() async {
   await _initServices();
@@ -32,6 +33,12 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return TruckDetailView(truck: args.truck, center: args.center);
+              },
+            );
+          } else if (settings.name == TruckManagementView.id) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return TruckManagementView(vendorUsername: settings.arguments);
               },
             );
           }
