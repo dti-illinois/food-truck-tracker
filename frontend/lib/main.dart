@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/user_service.dart';
 import 'views/login_view.dart';
-import 'views/truck_panel.dart';
 import 'views/truck_detail.dart';
+import 'views/truck_direction_map_view.dart';
 import 'views/truck_management_view.dart';
+import 'views/truck_panel.dart';
 
 void main() async {
   await _initServices();
@@ -39,6 +40,13 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return TruckManagementView(vendorUsername: settings.arguments);
+              },
+            );
+          } else if (settings.name == MapDirectionView.id) {
+            return MaterialPageRoute(
+              builder: (context) {
+                MapDirectionViewArguments args = settings.arguments;
+                return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
               },
             );
           }

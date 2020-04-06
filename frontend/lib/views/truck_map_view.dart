@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/truck_model.dart';
+import 'dart:async';
 
 class FoodTruckMapView extends StatefulWidget {
 
@@ -60,8 +60,10 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
             target: gcenter,
             zoom: 13.0,
           ), 
-          zoomGesturesEnabled: true,
           markers: _markers.toSet(),
+          scrollGesturesEnabled: true, 
+          zoomGesturesEnabled: true,
+          myLocationEnabled: true,
         ), // GoogleMap
       ),
     );

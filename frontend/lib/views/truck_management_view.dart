@@ -43,6 +43,8 @@ class _TruckManagementState extends State<TruckManagementView> {
     });
   }
 
+ 
+
    Widget _truckTitle() {
     bool starVisible = true; // TODO: depends on user type
     return Padding(
@@ -113,8 +115,8 @@ class _TruckManagementState extends State<TruckManagementView> {
                         fontSize: 16,
                         color: UiColors.bodyText))),
               ],
-            ),
-          );
+            ), // Row
+        ); // Padding
   }
 
   Widget _truckScheduleDetail() {

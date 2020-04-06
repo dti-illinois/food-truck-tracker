@@ -23,11 +23,9 @@ Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
 }
 
 Future<TruckModel> getFoodTruck(String username) async {
-	print(username);
   final response = await http.get(host+'/vendor/' + username);
   if (response.statusCode == 200) {
-  	print(response.body);
- 	return TruckModel.fromJson(jsonDecode(response.body));
+   	return TruckModel.fromJson(jsonDecode(response.body));
   } else {
     throw Exception('Failed to load trucks');
   }

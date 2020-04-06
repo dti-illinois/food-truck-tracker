@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
+import '../views/truck_direction_map_view.dart';
 import '../widgets/header_bar.dart';
 
 class TruckDetailArgument {
@@ -61,6 +62,11 @@ class _TruckDetailState extends State<TruckDetailView> {
 
   void _toggleFavTruck() {
       User().toggleFavTruck(truck.username);
+  }
+
+   void _onLoacationDetailTapped() {
+    Navigator.pushNamed(context, MapDirectionView.id, 
+      arguments: MapDirectionViewArguments(curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng), targetLocation: truck.location));
   }
 
    Widget _truckTitle() {
@@ -122,9 +128,11 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   Widget _truckLocationDetail() {
-    double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
-  	String locationText =  "${distance.toStringAsFixed(1)} mi (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
-  	return Padding(
+    String locationText =  "${truck.location.lat}, ${truck.location.lng}";
+    return 
+        GestureDetector(
+          onTap: _onLoacationDetailTapped,
+          child: Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +152,8 @@ class _TruckDetailState extends State<TruckDetailView> {
                         color: UiColors.bodyText))),
               ],
             ),
-          );
+          )
+        );
   }
 
   Widget _truckScheduleDetail() {
