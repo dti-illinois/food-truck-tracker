@@ -1,27 +1,10 @@
-import 'user_service.dart';
-import 'temp_data.dart';
+import 'package:provider/provider.dart';
 
-class User {
-	static final User _instance = User._internal();
-	UserModel _userModel;
-	User._internal() {
-		getUser(USERNAME).then((UserModel user) {
-			_userModel = user;
-		});
-	}
-	factory User() {
-		return _instance;
-	}
-	bool isFavTruck(String truckname) {
-	  	return _userModel?.isFavTruck(truckname) ?? false;
-	  }
-	void toggleFavTruck(String truckname) {
-		_userModel?.toggleFavTruck(truckname);
-	}
-}
+enum UserType { Vendor, User, Guest }
 
 class UserModel {	
 	final String username;
+  UserType _type;
 	Set<String> favTrucks; 
 	
 	UserModel({this.username, this.favTrucks});
@@ -43,9 +26,13 @@ class UserModel {
     );
   }
 
-  // String get username {
-  // 	return _username;
-  // }
+  UserType get userType {
+  	return _type;
+  }
+
+  void set userType(UserType type) {
+    _type = type;
+  }
 
   // Set<String> get favTrucks {
   // 	return _favTrucks;
@@ -65,7 +52,7 @@ class UserModel {
   }
 
   void toggleFavTruck(String truckname) {
-  	if(isFavTruck(truckname)) {
+  	if(!isFavTruck(truckname)) {
   		favTrucks.add(truckname);
   	} else {
   		favTrucks.remove(truckname);

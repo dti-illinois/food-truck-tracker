@@ -5,7 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
-import 'utils/Utils.dart';
+import '../utils/Utils.dart';
 
 class FilterListItemWidget extends StatelessWidget {
   final String label;

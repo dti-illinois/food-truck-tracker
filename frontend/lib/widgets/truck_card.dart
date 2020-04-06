@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'truck_model.dart';
-import 'user_model.dart';
-import 'utils/Utils.dart';
+import '../models/truck_model.dart';
+import '../models/user_model.dart';
+import '../services/user_service.dart';
+import '../utils/Utils.dart';
 
 class TruckCard extends StatefulWidget {
 	  TruckModel truck;
@@ -15,11 +16,24 @@ class TruckCard extends StatefulWidget {
 
 class TruckCardState extends State<TruckCard> {
 	bool _isFavorite;
+	bool _isFavoriteVisible = false;
 
 	@override
 	void initState() {
-		_isFavorite = User().isFavTruck(widget.truck.username);
+		_isFavoriteVisible = User().userType == UserType.User;
+		_isFavorite = _isFavoriteVisible && User().isFavTruck(widget.truck.username);
+		User().addListener(userFavSubscriber);
 		super.initState();
+	}
+
+	@override
+	void dispose() {
+		User().removeListener(userFavSubscriber);
+		super.dispose();
+	}
+
+	void userFavSubscriber() {
+		this.setState(() {_isFavorite = User().isFavTruck(widget.truck.username);});
 	}
 
 	Widget _buildTags(TruckModel truck) {
@@ -31,7 +45,7 @@ class TruckCardState extends State<TruckCard> {
   		widgetTags.add(Container(
   				alignment: Alignment.center,
   				padding: EdgeInsets.symmetric(horizontal: 20),
-  				margin: EdgeInsets.only(left: 10),
+  				margin: EdgeInsets.only(left: 10, top: 10),
   				height: 30,
   				decoration: BoxDecoration(
   					color: UiColors.darkBlueGrey,
@@ -49,9 +63,6 @@ class TruckCardState extends State<TruckCard> {
 
 	 void toggleFavTruck(String truckUsername) {
 	  	User().toggleFavTruck(truckUsername);
-	  	this.setState(() {
-	  		_isFavorite = !_isFavorite;
-	  		});
 	  }
 	@override
 	Widget build(BuildContext context) {
@@ -60,21 +71,26 @@ class TruckCardState extends State<TruckCard> {
 	  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
 	    return Container(
 	           padding: EdgeInsets.fromLTRB(10,10,10,10),
-	           height: 220,
+	           height: 210,
 	           width: double.maxFinite,
 	           child: Card(
 	             elevation: 5,
 	             child: InkWell(
 	               onTap: widget.onCardTap,
 		           child: Padding(
-		             padding: EdgeInsets.only(left: 10, right: 10),
+		             padding: EdgeInsets.only(left: 10, right: 10, top: 10),
 		             child: Column(
 		                 children: <Widget>[
 		                   Row(
 		                     children: <Widget>[
-		                       Text(truck.displayedName), 
-
-		                       GestureDetector(
+		                       Text(truck.displayedName, 
+		                       		style: TextStyle(
+				                    fontSize: 18,
+				                    color: UiColors.darkSlateBlueTwo,
+				                    letterSpacing: 1),), 
+		                       Visibility(
+		                       	visible: _isFavoriteVisible,
+		                       	child: GestureDetector(
 					              onTap: () {toggleFavTruck(truck.username);},
 					              child: Semantics(
 				                    label: _isFavorite ? 'Remove From Favorites': 'Add To Favorites',
@@ -82,6 +98,7 @@ class TruckCardState extends State<TruckCard> {
 				                    child:Padding(padding: EdgeInsets.all(3), 
 				                      child: Image.asset(_isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))) // Semantic
 	          					)// GestureDetector
+		                       ) // Visibility
 		                     ],
 		                     mainAxisAlignment: MainAxisAlignment.spaceBetween
 		                   ), // Row

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'display_type_header.dart';
-import 'filter_tab.dart';
-import 'truck_list_view.dart';
-import 'truck_map_view.dart';
-import 'truck_model.dart';
-import 'truck_service.dart';
-import 'temp_data.dart';
-import 'utils/Utils.dart';
+
+import '../config.dart';
+import '../models/truck_model.dart';
+import '../services/truck_service.dart';
+import '../utils/Utils.dart';
+import '../views/truck_list_view.dart';
+import '../views/truck_map_view.dart';
+import '../widgets/display_type_header.dart';
+import '../widgets/filter_tab.dart';
 
 class _PanelData {
   TruckPanelState         _panelState;
@@ -17,6 +18,7 @@ class _PanelData {
 
 
 class TruckPanel extends StatefulWidget {
+	static String id = "trucks";
 	_PanelData _data = _PanelData(); 
 
 	@override

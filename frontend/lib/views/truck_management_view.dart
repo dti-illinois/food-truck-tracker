@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'header_bar.dart';
-import 'truck_model.dart';
-import 'truck_service.dart';
-import 'truck_direction_map_view.dart';
-import 'utils/Utils.dart';
 
-class TruckDetailView extends StatefulWidget {
-  final TruckModel truck;
-  TruckDetailView({this.truck});
+import '../models/truck_model.dart';
+import '../models/user_model.dart';
+import '../services/truck_service.dart';
+import '../services/user_service.dart';
+import '../utils/Utils.dart';
+import '../widgets/header_bar.dart';
+
+class TruckManagementView extends StatefulWidget {
+  static String id = "truck_management";
+  String vendorUsername;
+  TruckManagementView({this.vendorUsername});
 
   @override
-  _TruckDetailState createState() =>
-    _TruckDetailState(truck);
+  _TruckManagementState createState() =>
+    _TruckManagementState();
 }
 
-class _TruckDetailState extends State<TruckDetailView> {
+class _TruckManagementState extends State<TruckManagementView> {
   TruckModel truck;
-  _TruckDetailState(this.truck);
 
   bool _isTruckLoading = false;
 
@@ -26,24 +28,25 @@ class _TruckDetailState extends State<TruckDetailView> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _loadFoodTruckDetail() {
     _isTruckLoading = true;
-    getFoodTruck(truck.username).then((TruckModel detailTruck) {
+    getFoodTruck(widget.vendorUsername).then((TruckModel detailTruck) {
         this.setState(() {
           truck = detailTruck;
           _isTruckLoading = false;
         });
-      });
+    });
   }
 
-  void _onLoacationDetailTapped() {
-    Navigator.pushNamed(context, "truck_direction_map", 
-      arguments: MapDirectionViewArguments(curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng), targetLocation: truck.location));
-  }
+ 
 
    Widget _truckTitle() {
     bool starVisible = true; // TODO: depends on user type
-    bool isFavorite = false; // TODO: depends on user class 
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -59,19 +62,8 @@ class _TruckDetailState extends State<TruckDetailView> {
                     letterSpacing: 1),
               ),
             ),
-            Visibility(visible: starVisible,child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: (){
-                	// TODO: implement "like" function   
-                },
-                child: Semantics(
-                    label: isFavorite ? 'Remove From Favorites': 'Add To Favorites',
-                    button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
-                      child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
-            ),),
           ],
-        ));
+    ));
   }
 
   Widget _truckDetails() {
@@ -103,28 +95,28 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  "${truck.location.lat}, ${truck.location.lng}";
-  	return 
-        GestureDetector(
-          onTap: _onLoacationDetailTapped,
-          child: Padding(
+  	String locationText =  " (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
+  	return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
-                ),
+                Container(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child:Image.asset('images/icon-location.png'),
+                    ),
+                    height: 20,
+                  ),
+                
                 Expanded(child: Text(locationText,
                     style: TextStyle(
                         fontFamily: 'ProximaNovaMedium',
                         fontSize: 16,
                         color: UiColors.bodyText))),
               ],
-            ),
-          )
-        );
+            ), // Row
+        ); // Padding
   }
 
   Widget _truckScheduleDetail() {
