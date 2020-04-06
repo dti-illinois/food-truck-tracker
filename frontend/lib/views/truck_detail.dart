@@ -31,10 +31,12 @@ class _TruckDetailState extends State<TruckDetailView> {
 
   bool _isTruckLoading = false;
   bool _isFavorite;
+  bool _isFavoriteVisible;
 
   @override
   void initState() {
-    _isFavorite = User().isFavTruck(widget.truck.username);
+    _isFavoriteVisible = User().userType == UserType.User;
+    _isFavorite = _isFavoriteVisible && User().isFavTruck(widget.truck.username);
     User().addListener(userFavSubscriber);
     _loadFoodTruckDetail();
     super.initState();
@@ -70,7 +72,6 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
    Widget _truckTitle() {
-    bool starVisible = true; // TODO: depends on user type
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -86,7 +87,7 @@ class _TruckDetailState extends State<TruckDetailView> {
                     letterSpacing: 1),
               ),
             ),
-            Visibility(visible: starVisible,child: GestureDetector(
+            Visibility(visible: _isFavoriteVisible, child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _toggleFavTruck,
                 child: Semantics(

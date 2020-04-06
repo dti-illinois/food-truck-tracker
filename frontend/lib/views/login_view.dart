@@ -11,14 +11,13 @@ class LoginView extends StatelessWidget {
 	static String id = "login";
 
 	void _onLogin(BuildContext context, String username, UserType type) {
-		if (type == UserType.User) {
+		if (type == UserType.User || type == UserType.Guest) {
 			User().updateUser(username, type);
 			Navigator.pushNamed(context, TruckPanel.id);
-		} else {
+		} else if (type == UserType.Vendor) {
 			// TODO: pass in vendor username to get corresponding view
 			Navigator.pushNamed(context, TruckManagementView.id, arguments: username);
-		} // TODO: handle guest login 
-
+		}
 	}
 
 	@override
@@ -26,7 +25,7 @@ class LoginView extends StatelessWidget {
 		return Scaffold(
 			body: 
 				Container(
-    				margin: const EdgeInsets.only(top: 400, bottom: 400),
+    				margin: const EdgeInsets.only(top: 300, bottom: 300),
     				padding: const EdgeInsets.all(4.0),
     				alignment: Alignment.center,
 					child: Column(
@@ -56,6 +55,17 @@ class LoginView extends StatelessWidget {
 						          color: UiColors.illinoisTransparentOrange05,
 						          padding: const EdgeInsets.all(8),
 						          child: const Text('User'),
+						          alignment: Alignment.center,
+						        ),
+							), // GestureDetector
+							GestureDetector(
+								onTap: () {
+									_onLogin(context, "", UserType.Guest);
+								},
+								child: Container(
+						          color: UiColors.illinoisTransparentOrange05,
+						          padding: const EdgeInsets.all(8),
+						          child: const Text('Guest'),
 						          alignment: Alignment.center,
 						        ),
 							) // GestureDetector

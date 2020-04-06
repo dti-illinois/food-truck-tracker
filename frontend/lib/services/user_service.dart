@@ -44,10 +44,15 @@ class User extends ChangeNotifier {
   }
 
   Future<void> updateUser(String username, UserType type) async {
-    await getUser(username).then((UserModel user) {
-          _userModel = user;
-        });
-    _userModel.userType = type; // TODO: this could be recorded in the database 
+    if (type == UserType.User) {
+      await getUser(username).then((UserModel user) {
+            _userModel = user;
+            _userModel.userType = type;
+          });
+    } else if (type == UserType.Guest) {
+      _userModel = new UserModel();
+      _userModel.userType = type;
+    }
   }
 
 }

@@ -16,10 +16,12 @@ class TruckCard extends StatefulWidget {
 
 class TruckCardState extends State<TruckCard> {
 	bool _isFavorite;
+	bool _isFavoriteVisible = false;
 
 	@override
 	void initState() {
-		_isFavorite = User().isFavTruck(widget.truck.username);
+		_isFavoriteVisible = User().userType == UserType.User;
+		_isFavorite = _isFavoriteVisible && User().isFavTruck(widget.truck.username);
 		User().addListener(userFavSubscriber);
 		super.initState();
 	}
@@ -86,7 +88,9 @@ class TruckCardState extends State<TruckCard> {
 				                    fontSize: 18,
 				                    color: UiColors.darkSlateBlueTwo,
 				                    letterSpacing: 1),), 
-		                       GestureDetector(
+		                       Visibility(
+		                       	visible: _isFavoriteVisible,
+		                       	child: GestureDetector(
 					              onTap: () {toggleFavTruck(truck.username);},
 					              child: Semantics(
 				                    label: _isFavorite ? 'Remove From Favorites': 'Add To Favorites',
@@ -94,6 +98,7 @@ class TruckCardState extends State<TruckCard> {
 				                    child:Padding(padding: EdgeInsets.all(3), 
 				                      child: Image.asset(_isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))) // Semantic
 	          					)// GestureDetector
+		                       ) // Visibility
 		                     ],
 		                     mainAxisAlignment: MainAxisAlignment.spaceBetween
 		                   ), // Row
