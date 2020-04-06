@@ -65,7 +65,7 @@ class TruckCardState extends State<TruckCard> {
 	           child: Card(
 	             elevation: 5,
 	             child: InkWell(
-	               onTap: () => widget.onCardTap,
+	               onTap: widget.onCardTap,
 		           child: Padding(
 		             padding: EdgeInsets.only(left: 10, right: 10),
 		             child: Column(

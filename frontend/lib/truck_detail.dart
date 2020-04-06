@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'header_bar.dart';
 import 'truck_model.dart';
 import 'truck_service.dart';
+import 'truck_direction_map_view.dart';
 import 'utils/Utils.dart';
 
 class TruckDetailView extends StatefulWidget {
@@ -33,6 +34,11 @@ class _TruckDetailState extends State<TruckDetailView> {
           _isTruckLoading = false;
         });
       });
+  }
+
+  void _onLoacationDetailTapped() {
+    Navigator.pushNamed(context, "truck_direction_map", 
+      arguments: MapDirectionViewArguments(curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng), targetLocation: truck.location));
   }
 
    Widget _truckTitle() {
@@ -98,7 +104,10 @@ class _TruckDetailState extends State<TruckDetailView> {
 
   Widget _truckLocationDetail() {
   	String locationText =  "${truck.location.lat}, ${truck.location.lng}";
-  	return Padding(
+  	return 
+        GestureDetector(
+          onTap: _onLoacationDetailTapped,
+          child: Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +123,8 @@ class _TruckDetailState extends State<TruckDetailView> {
                         color: UiColors.bodyText))),
               ],
             ),
-          );
+          )
+        );
   }
 
   Widget _truckScheduleDetail() {

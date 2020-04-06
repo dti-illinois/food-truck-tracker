@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'truck_panel.dart';
 import 'truck_detail.dart';
+import 'truck_direction_map_view.dart';
 
 void main() => runApp(FoodTruckTracker());
 
@@ -16,6 +17,13 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return TruckDetailView(truck: settings.arguments);
+              },
+            );
+          } else if (settings.name == "truck_direction_map") {
+            return MaterialPageRoute(
+              builder: (context) {
+                MapDirectionViewArguments args = settings.arguments;
+                return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
               },
             );
           }
