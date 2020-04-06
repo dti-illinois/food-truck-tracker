@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'truck_model.dart';
 import 'utils/Utils.dart';
+import 'secret.dart';
 
 const double CAMERA_ZOOM = 13;
 const double CAMERA_TILT = 0;
@@ -82,20 +83,17 @@ class MapDirectionState extends State<MapDirectionView> {
 	}
 
 	setPolylines() async {
-		 print("${_sourceLocation.latitude} ${_sourceLocation.longitude},${_destLocation.latitude} ${ _destLocation.longitude}");
 		await
 		  polylinePoints?.getRouteBetweenCoordinates(
-		     'AIzaSyAElfARO8A8VWbvS7lMXtj657vXwG3pqcY',
+		     GOOGLE_MAP_API_KEY,
 		     _sourceLocation.latitude,
 		     _sourceLocation.longitude,
 		     _destLocation.latitude,
 		     _destLocation.longitude)
 		  .then((result) {
-		  		print("finish fetching");
 				if(result.isNotEmpty){
 				  // loop through all PointLatLng points and convert them
 				  // to a list of LatLng, required by the Polyline
-				  print("result ont empty");
 				  result.forEach((PointLatLng point){
 				     polylineCoordinates.add(
 				        LatLng(point.latitude, point.longitude));
