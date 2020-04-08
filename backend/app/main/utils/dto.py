@@ -1,4 +1,5 @@
 from flask_restx import Namespace, fields
+from ..model.vendor_model import VendorTags
 
 class VendorDto:
     api = Namespace('vendor', description='vendor related operations')
@@ -15,11 +16,11 @@ class VendorDto:
         'username': fields.String(required=True, description='vendor username'),
         'location': fields.Nested(location, description='vendor location'),
         'schedule': fields.Nested(schedule, description='vendor schedule'),
-        'tags': fields.List(fields.String),
+        'tags': fields.List(fields.String(enum = VendorTags.tags)),
         'is_open': fields.Boolean(readonly=True, description='is vendor open'),
     })
     vendor_detail = api.inherit('vendor_detail', vendor, {
-        'description': fields.String(description='vendor description'),
+        'description': fields.String(description='vendor description', default=''),
     })
 
 class UserDto:

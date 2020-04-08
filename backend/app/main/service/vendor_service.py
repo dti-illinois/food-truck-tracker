@@ -3,8 +3,7 @@ from ..model.user_model import User
 from datetime import date, datetime, timezone
 from bson import json_util
 
-ISO_FORMAT = 'YYYY-MM-DDTHH:MM:SS'
-STRPTIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 def get_all_vendors():
 	ret = json_util.loads(Vendor.objects().to_json())
@@ -48,16 +47,23 @@ def add_vendor_info(vendor):
 	return vendor
 
 def post_vendor(vendor):
-	vendor_document = Vendor()
-	vendor_document.username = vendor['username']
-	vendor_document.displayed_name = vendor['displayed_name']
-	vendor_document.location = Location()
-	vendor_document.location.lat = vendor['location']['lat']
-	vendor_document.location.lng = vendor['location']['lng']
-	vendor_document.schedule = Schedule()
-	vendor_document.schedule.end = datetime.strptime(vendor['schedule']['end'], STRPTIME_FORMAT)
-	vendor_document.schedule.start = datetime.strptime(vendor['schedule']['start'], STRPTIME_FORMAT)
-	vendor_document.description = vendor['description']
-	vendor_document.tags = vendor['tags']
-	vendor_document = vendor_document.save()
-	return json_util.loads(vendor_document.to_json())
+	try:
+		location = Location()
+		if 'location' in vendor:
+			location = Location(lat=vendor['location']['lat'], lng=vendor['location']['lng'])
+		schedule = Schedule()
+		if 'schedule' in vendor:
+			schedule = Schedule(end=datetime.strptime(vendor['schedule']['end'], ISO_FORMAT), start=datetime.strptime(vendor['schedule']['start'], ISO_FORMAT))
+		print("schedule is done!")
+		vendor_document = Vendor(
+			username = vendor['username'],
+			displayed_name = vendor['displayed_name'],
+			location = location,
+			schedule = schedule,
+			description = vendor.get('description', ''),
+			tags = vendor.get('tags', ''),
+		)
+		vendor_document = vendor_document.save()
+		return get_vendor_by_username(vendor['username'])
+	except:
+		return "Error Occurred"
