@@ -30,3 +30,13 @@ Future<TruckModel> getFoodTruck(String username) async {
     throw Exception('Failed to load trucks');
   }
 }
+
+Future<bool> updateFoodTruck(TruckModel truck) async {
+  return true;
+  final response = await http.put(host + '/vendor/' + truck.username);
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    return false;
+  }
+}

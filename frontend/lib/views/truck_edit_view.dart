@@ -5,27 +5,26 @@ import '../models/user_model.dart';
 import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
-import '../views/truck_edit_view.dart';
+import '../views/truck_management_view.dart';
 import '../widgets/header_bar.dart';
 
-class TruckManagementView extends StatefulWidget {
-  static String id = "truck_management";
-  String vendorUsername;
-  TruckManagementView({this.vendorUsername});
+class TruckEditView extends StatefulWidget {
+  static String id = "truck_edit";
+  TruckModel truck;
+  TruckEditView({this.truck});
 
   @override
-  _TruckManagementState createState() =>
-    _TruckManagementState();
+  _TruckEditState createState() =>
+    _TruckEditState();
 }
 
-class _TruckManagementState extends State<TruckManagementView> {
+class _TruckEditState extends State<TruckEditView> {
   TruckModel truck;
 
-  bool _isTruckLoading = false;
 
   @override
   void initState() {
-    _loadFoodTruckDetail();
+    truck = widget.truck;
     super.initState();
   }
 
@@ -34,23 +33,7 @@ class _TruckManagementState extends State<TruckManagementView> {
     super.dispose();
   }
 
-  void _loadFoodTruckDetail() {
-    _isTruckLoading = true;
-    getFoodTruck(widget.vendorUsername).then((TruckModel detailTruck) {
-        this.setState(() {
-          truck = detailTruck;
-          _isTruckLoading = false;
-        });
-    });
-  }
-
-  void _editFoodTruck() {
-    Navigator.pushNamed(context, TruckEditView.id, 
-      arguments: truck);
-  }
-
   Widget _truckTitle() {
-    bool starVisible = true; // TODO: depends on user type
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -68,14 +51,14 @@ class _TruckManagementState extends State<TruckManagementView> {
             ),
             GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: _editFoodTruck,
+                onTap: _saveFoodTruck,
                 child: Semantics(
-                    label: 'Edit',
+                    label: 'Save',
                     button: true,
                     child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
-                      child: Image.asset('images/icon-edit.png')))
+                      child: Image.asset('images/icon-check-example.png')))
             ), // GestureDetector
-          ], // Row Widgets
+          ],
     ));
   }
 
@@ -196,18 +179,18 @@ class _TruckManagementState extends State<TruckManagementView> {
         ));
   }
 
+  void _saveFoodTruck() {
+    updateFoodTruck(truck).then((bool isSuccess) {
+      if(isSuccess) {
+         Navigator.pushNamed(context, TruckManagementView.id, 
+        arguments: truck.username);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _isTruckLoading? Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              )
-            ],
-          )
-     :  Scaffold(
+    return  Scaffold(
       body: Column(
         children: <Widget>[Expanded(
         child: Container(

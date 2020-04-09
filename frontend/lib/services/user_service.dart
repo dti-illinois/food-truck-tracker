@@ -43,6 +43,10 @@ class User extends ChangeNotifier {
    _userModel.userType = type;
   }
 
+  String get username {
+    return _userModel.username;
+  }
+
   Future<void> updateUser(String username, UserType type) async {
     if (type == UserType.User) {
       await getUser(username).then((UserModel user) {
