@@ -20,17 +20,30 @@ class TruckEditView extends StatefulWidget {
 
 class _TruckEditState extends State<TruckEditView> {
   TruckModel truck;
-
+  TextEditingController _titleController;
+  TextEditingController _descriptionController;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
 
   @override
   void initState() {
-    truck = widget.truck;
     super.initState();
+    truck = widget.truck;
+    _initTimeOfDay();
   }
 
   @override
   void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _initTimeOfDay() {
+    startTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.start));
+    endTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.end));
+    _titleController = TextEditingController(text: truck.displayedName);
+    _descriptionController = TextEditingController(text: truck.description);
   }
 
   Widget _truckTitle() {
@@ -41,8 +54,8 @@ class _TruckEditState extends State<TruckEditView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: Text(
-                truck.displayedName,
+              child: TextFormField(
+                controller: _titleController,
                 style: TextStyle(
                     fontSize: 24,
                     color: UiColors.darkSlateBlueTwo,
@@ -115,8 +128,28 @@ class _TruckEditState extends State<TruckEditView> {
         ); // Padding
   }
 
+  Future<TimeOfDay> _pickTime(TimeOfDay initialTime) async {
+    TimeOfDay time =
+        await showTimePicker(context: context, initialTime: initialTime);
+    return time;
+  }
+
+  void _onTapStartTime() async {
+    TimeOfDay time =
+        await _pickTime(startTime ?? (new TimeOfDay.now()));
+    if (time != null) startTime = time;
+    setState(() {});
+  }
+
+void _onTapEndTime() async {
+    TimeOfDay time =
+        await _pickTime(endTime ?? (new TimeOfDay.now()));
+    if (time != null) endTime = time;
+    setState(() {});
+  }
+
   Widget _truckScheduleDetail() {
-  	String displayTime = "${truck.schedule.start} - ${truck.schedule.end}";
+    print('${startTime}  ${truck.schedule.start}');
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(
@@ -125,7 +158,7 @@ class _TruckEditState extends State<TruckEditView> {
                 children: <Widget>[
 	              Semantics(
 	              excludeSemantics: true,
-	              label: displayTime,
+	              label: 'displayTime',
 	              child:
 	                  Row(
 	                    crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,11 +166,14 @@ class _TruckEditState extends State<TruckEditView> {
 	                      Padding(
 	                        padding: EdgeInsets.only(right: 10),
 	                        child:Image.asset('images/icon-time.png'),),
-	                      Expanded(child: Text(displayTime,
-		                    style: TextStyle(
-		                        fontFamily: 'ProximaNovaMedium',
-		                        fontSize: 16,
-		                        color: UiColors.bodyText))),
+	                      _ScheduleDisplayView(
+                          label: TimeUtils.formatTimeOfDay(startTime),
+                          onTap: _onTapStartTime,
+                        ), 
+                        _ScheduleDisplayView(
+                          label: TimeUtils.formatTimeOfDay(endTime),
+                          onTap: _onTapEndTime,
+                        ), 
 	                    ],
 	                  ) // Row 
 	               ), // Semantic
@@ -173,10 +209,34 @@ class _TruckEditState extends State<TruckEditView> {
       return Container();
     }
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          child: Text(truck.description),
-        ));
+        padding: EdgeInsets.only(bottom: 8),
+        child: Row(
+              children: <Widget>[
+                  Expanded(
+                   child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: _descriptionController,
+                    style: TextStyle(
+                        color: UiColors.darkSlateBlueTwo,
+                        fontSize: 14,
+                        fontFamily: 'ProximaNovaBold',
+                        letterSpacing: 1),
+                  ), // TextFormField
+                ), // Container
+                Padding(
+                  padding: EdgeInsets.only(left: 2),
+                  child: Text(
+                    '*',
+                    style: TextStyle(
+                        color: UiColors.illinoisOrange,
+                        fontSize: 14,
+                        fontFamily: 'ProximaNovaBold'),
+                  ),
+                ) // Padding
+              ],
+            ), // Row
+      );
   }
 
   void _saveFoodTruck() {
@@ -232,6 +292,42 @@ class _TruckEditState extends State<TruckEditView> {
         ],
       ), // Column
     ); // Scaffold
+  }
+}
+
+
+class _ScheduleDisplayView extends StatelessWidget {
+  final String label;
+  final GestureTapCallback onTap;
+
+  _ScheduleDisplayView({this.label, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        width: 142,
+        decoration: BoxDecoration(
+            border: Border.all(color: UiColors.lightPeriWinkle, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label,
+              style: TextStyle(
+                  color: UiColors.darkSlateBlueTwo,
+                  fontSize: 16,
+                  fontFamily: 'ProximaNovaMedium'),
+            ),
+            Image.asset('images/icon-down.png')
+          ],
+        ),
+      ),
+    );
   }
 }
 

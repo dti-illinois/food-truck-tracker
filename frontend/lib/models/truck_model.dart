@@ -105,8 +105,8 @@ class Schedule {
 	String end;
 	Schedule({this.start,this.end});
 	factory Schedule.fromJson(Map<String, dynamic> json) {
-		return new Schedule(start: new DateFormat("hh:mm a").format(DateTime.parse(json['start'])), 
-			end: new DateFormat("hh:mm a").format(DateTime.parse(json['end'])));
+		return new Schedule(start: json['start'].split(new RegExp(r"\.|\+"))[0], 
+			end: json['end'].split(new RegExp(r"\.|\+"))[0]);
 	}
 	String toString() {
 		return '${this.start} - ${this.end}';
