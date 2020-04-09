@@ -7,8 +7,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'display_type_tab.dart';
-import 'utils/Utils.dart';
+import '../utils/Utils.dart';
+import '../widgets/display_type_tab.dart';
 
 enum ListMapDisplayType { List, Map }
 

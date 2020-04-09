@@ -7,7 +7,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'utils/Utils.dart';
+import '../utils/Utils.dart';
 
 class SliverToutHeaderBar extends SliverAppBar {
   final BuildContext context;

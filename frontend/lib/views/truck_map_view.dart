@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import '../models/truck_model.dart';
 import 'dart:async';
-import 'truck_model.dart';
 
 class FoodTruckMapView extends StatefulWidget {
 
@@ -21,20 +20,18 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
   @override
   void initState() {
     widget.trucksStream.asBroadcastStream().listen((trucks) {
-      setState(() {
         _buildMarkers(trucks);
-        });
     });
     super.initState();
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    _buildMarkers([]);
   }
 
   void _buildMarkers(List<TruckModel> trucks) {
     setState(() {
+      // Pretty hacky, need to change later
         List<Marker> markers = [];
         for (final truck in trucks) {
           final marker = Marker(
@@ -47,6 +44,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
           );
           markers.add(marker);
         }
+        _markers = markers;
       });
   }
 

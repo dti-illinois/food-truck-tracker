@@ -4,3 +4,6 @@ const double LOCATION_LAT = 40.1129;
 const double LOCATION_LNG = -88.2262;
 
 const String USERNAME = "apple";
+const String VENDOR_USERNAME = "cracked";
+
+const String HOST = "http://0.0.0.0:5000";
