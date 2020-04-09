@@ -54,6 +54,16 @@ class Vendor(Resource):
         else:
             return vendor
 
+    @api.doc('update a vendor')
+    @api.marshal_with(_vendor_detail)
+    def put(self, vendor_username):
+        """get a vendor with its identifier"""
+        vendor = update_vendor_by_username(vendor_username, request.get_json())
+        if not vendor:
+            api.abort(404)
+        else:
+            return vendor
+
       
 @api.route('/fav_trucks/<username>')
 @api.param('username', 'The User identifier')
