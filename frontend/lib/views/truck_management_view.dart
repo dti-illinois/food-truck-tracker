@@ -21,6 +21,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   TruckModel truck;
 
   bool _isTruckLoading = false;
+  bool _isEditing = false;
 
   @override
   void initState() {
@@ -43,9 +44,7 @@ class _TruckManagementState extends State<TruckManagementView> {
     });
   }
 
- 
-
-   Widget _truckTitle() {
+  Widget _truckTitle() {
     bool starVisible = true; // TODO: depends on user type
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -62,6 +61,15 @@ class _TruckManagementState extends State<TruckManagementView> {
                     letterSpacing: 1),
               ),
             ),
+            GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _toggleFavTruck,
+                child: Semantics(
+                    label: _isEditing ? 'Editing': 'Viewing',
+                    button: true,
+                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
+                      child: Image.asset(_isEditing?'images/icon-check-example.png':'images/icon-edit.png')))
+            ), // GestureDetector
           ],
     ));
   }
