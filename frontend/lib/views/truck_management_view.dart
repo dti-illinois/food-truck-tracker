@@ -167,8 +167,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   	List<Widget> widgetTags = [];
   	for(String tag in TagHelper.tagsToList(truck.tags)) {
   		widgetTags.add(Container(
-  				alignment: Alignment.center,
-  				padding: EdgeInsets.symmetric(horizontal: 20),
+  				padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
   				margin: EdgeInsets.only(left: 10),
   				height: 30,
   				decoration: BoxDecoration(
@@ -182,7 +181,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   				) // Text
   		)); // Container
   	}
-  	return Row(children: widgetTags);
+  	return Wrap(runSpacing: 5, children: widgetTags);
   }
 
   Widget _truckDescription() {

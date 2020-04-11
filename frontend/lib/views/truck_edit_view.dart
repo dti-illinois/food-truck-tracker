@@ -22,14 +22,17 @@ class _TruckEditState extends State<TruckEditView> {
   TruckModel truck;
   TextEditingController _titleController;
   TextEditingController _descriptionController;
+  ScrollController _scrollController = ScrollController();
   TimeOfDay startTime;
   TimeOfDay endTime;
+  List<Tag> tags; 
+  bool _tagsListVisible = false;
 
   @override
   void initState() {
     super.initState();
     truck = widget.truck;
-    _initTimeOfDay();
+    _initElements();
   }
 
   @override
@@ -39,11 +42,12 @@ class _TruckEditState extends State<TruckEditView> {
     super.dispose();
   }
 
-  void _initTimeOfDay() {
+  void _initElements() {
     startTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.start));
     endTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.end));
     _titleController = TextEditingController(text: truck.displayedName);
     _descriptionController = TextEditingController(text: truck.description);
+    tags = List<Tag>.from(truck.tags);
   }
 
   Widget _truckTitle() {
@@ -148,8 +152,59 @@ void _onTapEndTime() async {
     setState(() {});
   }
 
+void _onTapTag(Tag tag) {
+  tags.remove(tag);
+  setState(() {});
+}
+
+void _onTagListItemTap(Tag tag) {
+  tags.add(tag);
+  setState(() {});
+}
+
+  Widget _truckTagDropdownList() {
+    List<Tag> tagsUnselected = Tag.values.where((Tag tag) => !tags.contains(tag)).toList();
+    print(tagsUnselected.length);
+
+    return Semantics(
+          child:Visibility(
+            visible: _tagsListVisible,
+            child: Padding(
+                padding: EdgeInsets.only(left: 3, right: 3, top: 5, bottom: 5),
+                child: Semantics(child:Container(
+                  decoration: BoxDecoration(
+                    color: UiColors.illinoisOrange,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2, bottom: 2),
+                    child: Container(
+                      color: Colors.white,
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(0.0),
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) => Divider(
+                              height: 1,
+                              color: UiColors.darkSlateBlueTwoTransparent03,
+                            ),
+                        itemCount: tagsUnselected.length,
+                        itemBuilder: (context, index) {
+                          return _TagListItemWidget(
+                            label: TagHelper.tagToString(tagsUnselected[index]),
+                            onTap: () {
+                              _onTagListItemTap(tagsUnselected[index]);
+                            },
+                          );
+                        },
+                        controller: _scrollController,
+                      ),
+                    ),
+                  ),
+                ))),
+          ));
+  }
+
   Widget _truckScheduleDetail() {
-    print('${startTime}  ${truck.schedule.start}');
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(
@@ -182,26 +237,56 @@ void _onTapEndTime() async {
       );
   }
 
+  void _dropdownButtonOnTap() {
+    _tagsListVisible = !_tagsListVisible;
+    this.setState(() {});
+  }
+
   Widget _truckTags() {
   	List<Widget> widgetTags = [];
-  	for(String tag in TagHelper.tagsToList(truck.tags)) {
+  	for(Tag tag in tags) {
   		widgetTags.add(Container(
-  				alignment: Alignment.center,
   				padding: EdgeInsets.symmetric(horizontal: 20),
   				margin: EdgeInsets.only(left: 10),
   				height: 30,
+          // width: 40,
   				decoration: BoxDecoration(
   					color: UiColors.darkBlueGrey,
   					borderRadius: BorderRadius.circular(30),
   				), // BoxDecoration
-  				child: Text(
-  					tag, style: TextStyle(
-  					color: UiColors.white
-  					), // TextStyle
-  				) // Text
+  				child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                Text(
+                  TagHelper.tagToString(tag), style: TextStyle(
+                  color: UiColors.white
+                  ), // TextStyle
+                ),  // Text
+                SizedBox(width: 10),
+                GestureDetector(
+                  child: Image.asset('images/icon-x-orange-small.png'),
+                  onTap: () => _onTapTag(tag),
+                ) // GestureDetector
+              ]
+            )// Row 
   		)); // Container
   	}
-  	return Row(children: widgetTags);
+    widgetTags.add(
+        GestureDetector(
+            child: Padding(child: _tagsListVisible ? Image.asset('images/icon-up.png') : Image.asset('images/icon-down.png'),padding: EdgeInsets.symmetric(horizontal: 3)),
+            onTap: _dropdownButtonOnTap,
+          )
+      );
+  	return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Wrap (
+                alignment: WrapAlignment.start,
+                children: widgetTags,
+                runSpacing: 5,
+               ),
+              _truckTagDropdownList()]);
   }
 
   Widget _truckDescription() {
@@ -262,25 +347,25 @@ void _onTapEndTime() async {
             	SliverList(
             		delegate: SliverChildListDelegate(
             			[
-                          Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-	                                Padding(
-	                                    padding:
-	                                    EdgeInsets.only(right: 20, left: 20),
-	                                    child: Column(
-	                                        mainAxisAlignment: MainAxisAlignment.start,
-	                                        crossAxisAlignment: CrossAxisAlignment.start,
-	                                        children: <Widget>[
-	                                          _truckTitle(),
-	                                          _truckDetails(),
-	                                          _truckDescription(),
-	                                        ]
-	                                    )),
-                              ],
-                            ), // Column 
+                        Container(
+                          child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                      Padding(
+                                          padding:
+                                          EdgeInsets.only(right: 20, left: 20),
+                                          child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                _truckTitle(),
+                                                _truckDetails(),
+                                                _truckDescription(),
+                                              ]
+                                          )),
+                                  ],
+                                ), // Column 
                         ) // Container         
                       ],addSemanticIndexes:false
             		), // SliverChildListDelegate
@@ -330,4 +415,35 @@ class _ScheduleDisplayView extends StatelessWidget {
     );
   }
 }
+
+class _TagListItemWidget extends StatelessWidget {
+  final String label;
+  final GestureTapCallback onTap;
+
+  _TagListItemWidget({this.label, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle labelsStyle = TextStyle(fontSize: 16, color: UiColors.darkSlateBlueTwo, fontFamily: 'ProximaNovaMedium');
+    bool hasSubLabel = false;
+    return Semantics(
+        label: label,
+        button: true,
+        excludeSemantics: true,
+        child: InkWell(
+            onTap: onTap,
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: labelsStyle,
+                      ), // Text
+              ), // Padding
+        ) // InkWell
+    );
+  }
+}
+
 
