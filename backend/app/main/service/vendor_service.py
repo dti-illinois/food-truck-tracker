@@ -4,7 +4,6 @@ from datetime import date, datetime, timezone
 from bson import json_util
 from ..utils.utils import parse_string_to_datetime, objects_to_json
 
-
 def get_all_vendors():
 	ret = objects_to_json(Vendor.objects())
 	return list(map(add_vendor_info, ret))

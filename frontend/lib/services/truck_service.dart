@@ -32,8 +32,11 @@ Future<TruckModel> getFoodTruck(String username) async {
 }
 
 Future<bool> updateFoodTruck(TruckModel truck) async {
-  return true;
-  final response = await http.put(host + '/vendor/' + truck.username);
+  print( truck.toJson());
+  final response = await http.put(host + '/vendor/' + truck.username,
+       headers: {"Content-Type": "application/json"},
+      body: json.encode(truck.toJson())
+    );
   if (response.statusCode == 200) {
     return true;
   } else {

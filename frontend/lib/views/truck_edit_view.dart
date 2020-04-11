@@ -198,8 +198,6 @@ void _onTagListItemTap(Tag tag) {
 
   Widget _truckTagDropdownList() {
     List<Tag> tagsUnselected = Tag.values.where((Tag tag) => !tags.contains(tag)).toList();
-    print(tagsUnselected.length);
-
     return Semantics(
           child:Visibility(
             visible: _tagsListVisible,
@@ -359,6 +357,11 @@ void _onTagListItemTap(Tag tag) {
   }
 
   void _saveFoodTruck() {
+    truck.displayedName = _titleController.text;
+    truck.description = _descriptionController.text;
+    truck.schedule = Schedule.fromTimeOfDay(startTime, endTime);
+    truck.tags = List<Tag>.from(tags);
+    truck.location = location;
     updateFoodTruck(truck).then((bool isSuccess) {
       if(isSuccess) {
          Navigator.pushNamed(context, TruckManagementView.id, 

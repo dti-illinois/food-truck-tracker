@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-class TruckModel{
+class TruckModel {
 	String displayedName;
 	String username;
 	Location location; 
@@ -25,6 +25,18 @@ class TruckModel{
         isOpen: json['is_open'],
 			);
 	}
+
+  Map<String, dynamic> toJson() {
+    // print(displayedName);
+    var map = {
+      'displayed_name': displayedName,
+      'location': location.toJson(),
+      'schedule': schedule.toJson(),
+      'description': description,
+      'tags': TagHelper.tagsToList(tags),
+    };
+    return map;
+  }
 }
 
 enum Tag { Savory, Sweet, Vegetarian, Free }
@@ -101,12 +113,20 @@ class Location {
                location_name: "", // TODO: maybe store location_name in database
                );
 	}
+
+  Map<String, dynamic> toJson() {
+    return {'lat': lat, 'lng': lng};
+  }
 }
 
 class Schedule {
 	String start;
 	String end;
 	Schedule({this.start,this.end});
+  Schedule.fromTimeOfDay(TimeOfDay todStart, TimeOfDay todEnd) {
+    start = _formatTimeOfDay(todStart);
+    end = _formatTimeOfDay(todEnd);
+  }
 	factory Schedule.fromJson(Map<String, dynamic> json) {
 		return new Schedule(start: json['start'].split(new RegExp(r"\.|\+"))[0], 
 			end: json['end'].split(new RegExp(r"\.|\+"))[0]);
@@ -114,4 +134,14 @@ class Schedule {
 	String toString() {
 		return '${this.start} - ${this.end}';
 	}
+
+  String _formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    return dt.toIso8601String();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'start': start, 'end': end};
+  }
 }
