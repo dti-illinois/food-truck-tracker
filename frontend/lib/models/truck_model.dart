@@ -93,10 +93,13 @@ class TagHelper {
 class Location {
 	double lat;
 	double lng;
-	Location({this.lat, this.lng});
+  String location_name; 
+	Location({this.lat, this.lng, this.location_name});
 	factory Location.fromJson(Map<String, dynamic> json) {
 		return new Location(lat: json['lat'],
-							 lng: json['lng']);
+							 lng: json['lng'],
+               location_name: "", // TODO: maybe store location_name in database
+               );
 	}
 }
 

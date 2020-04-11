@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../config.dart';
 import '../models/truck_model.dart';
 import '../models/user_model.dart';
+import '../secret.dart';
 import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
@@ -25,6 +29,7 @@ class _TruckEditState extends State<TruckEditView> {
   ScrollController _scrollController = ScrollController();
   TimeOfDay startTime;
   TimeOfDay endTime;
+  Location location; 
   List<Tag> tags; 
   bool _tagsListVisible = false;
 
@@ -48,6 +53,7 @@ class _TruckEditState extends State<TruckEditView> {
     _titleController = TextEditingController(text: truck.displayedName);
     _descriptionController = TextEditingController(text: truck.description);
     tags = List<Tag>.from(truck.tags);
+    location = truck.location;
   }
 
   Widget _truckTitle() {
@@ -108,7 +114,7 @@ class _TruckEditState extends State<TruckEditView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  " (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
+  	String locationText =  !location.location_name.isEmpty ? location.location_name : "(${location.lat.toStringAsFixed(1)}, ${location.lng.toStringAsFixed(1)})";
   	return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
@@ -121,12 +127,21 @@ class _TruckEditState extends State<TruckEditView> {
                     ),
                     height: 20,
                   ),
-                
                 Expanded(child: Text(locationText,
                     style: TextStyle(
                         fontFamily: 'ProximaNovaMedium',
                         fontSize: 16,
                         color: UiColors.bodyText))),
+                GestureDetector(
+                  child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: UiColors.darkSlateBlueTwoTransparent03)
+                        ),
+                        child: Text("Edit Location"),
+                      ),
+                  onTap: _onTapEditLocation,
+                ),
               ],
             ), // Row
         ); // Padding
@@ -136,6 +151,25 @@ class _TruckEditState extends State<TruckEditView> {
     TimeOfDay time =
         await showTimePicker(context: context, initialTime: initialTime);
     return time;
+  }
+
+  void _onTapEditLocation() async {
+    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlacePicker(
+                            apiKey: GOOGLE_MAP_API_KEY,   // Put YOUR OWN KEY here.
+                            initialPosition: LatLng(LOCATION_LAT, LOCATION_LNG),
+                            useCurrentLocation: false,
+                            onPlacePicked: (result) {
+                              location = new Location(lng: result.geometry.location.lng, lat: result.geometry.location.lat, location_name: result.formattedAddress );
+                              Navigator.of(context).pop();
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      );
+
   }
 
   void _onTapStartTime() async {
