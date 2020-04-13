@@ -8,7 +8,8 @@ class TruckCard extends StatefulWidget {
 	  TruckModel truck;
 	  Location center;
 	  GestureTapCallback onCardTap;
-	  TruckCard({this.truck, this.center, this.onCardTap});
+	  bool isFavoriteVisible;
+	  TruckCard({this.truck, this.center, this.onCardTap, this.isFavoriteVisible=false});
 
 	  @override
 	  TruckCardState createState() => TruckCardState(); 
@@ -16,12 +17,10 @@ class TruckCard extends StatefulWidget {
 
 class TruckCardState extends State<TruckCard> {
 	bool _isFavorite;
-	bool _isFavoriteVisible = false;
 
 	@override
 	void initState() {
-		_isFavoriteVisible = User().userType == UserType.User;
-		_isFavorite = _isFavoriteVisible && User().isFavTruck(widget.truck.username);
+		_isFavorite = widget.isFavoriteVisible && User().isFavTruck(widget.truck.username);
 		User().addListener(userFavSubscriber);
 		super.initState();
 	}
@@ -67,7 +66,8 @@ class TruckCardState extends State<TruckCard> {
 	@override
 	Widget build(BuildContext context) {
 		TruckModel truck = widget.truck;
-		double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
+		double distance = widget.center != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng) : -1;
+		String distanceString = distance >= 0 ? "${distance.toStringAsFixed(1)} mi away" : ""; 
 	  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
 	    return Container(
 	           padding: EdgeInsets.fromLTRB(10,10,10,10),
@@ -89,7 +89,7 @@ class TruckCardState extends State<TruckCard> {
 				                    color: UiColors.darkSlateBlueTwo,
 				                    letterSpacing: 1),), 
 		                       Visibility(
-		                       	visible: _isFavoriteVisible,
+		                       	visible: widget.isFavoriteVisible,
 		                       	child: GestureDetector(
 					              onTap: () {toggleFavTruck(truck.username);},
 					              child: Semantics(
@@ -108,7 +108,7 @@ class TruckCardState extends State<TruckCard> {
 		                            crossAxisAlignment: CrossAxisAlignment.start,
 		                           children: <Widget>[
 		                             Text(scheduleString),
-		                             Text("${distance.toStringAsFixed(1)} mi away" ),
+		                             Text(distanceString),
 		                           ], // WidgetList of Column
 		                         ),//Column
 		                       Image(

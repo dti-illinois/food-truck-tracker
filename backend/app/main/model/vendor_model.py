@@ -3,6 +3,7 @@ from app.main import db
 class Location(db.EmbeddedDocument):
     lat = db.FloatField(required=True)
     lng = db.FloatField(required=True)
+    location_name = db.StringField(default="")
 
 class Schedule(db.EmbeddedDocument):
     start = db.DateTimeField(required=True)

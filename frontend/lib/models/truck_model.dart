@@ -51,6 +51,9 @@ class TagHelper {
       else if (tagString == 'Vegetarian') {
         return Tag.Vegetarian;
       }
+      else if (tagString == 'Free') {
+        return Tag.Free;
+      }
     }
     return null;
   }
