@@ -108,7 +108,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  " (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
+    String locationText =  !truck.location.location_name.isEmpty ? truck.location.location_name : "(${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
   	return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
@@ -166,6 +166,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   Widget _truckTags() {
   	List<Widget> widgetTags = [];
   	for(String tag in TagHelper.tagsToList(truck.tags)) {
+      print(tag);
   		widgetTags.add(Container(
   				padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
   				margin: EdgeInsets.only(left: 10),

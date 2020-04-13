@@ -63,6 +63,9 @@ class TagHelper {
       else if (tagString == 'Vegetarian') {
         return Tag.Vegetarian;
       }
+      else if (tagString == 'Free') {
+        return Tag.Free;
+      }
     }
     return null;
   }
@@ -110,12 +113,12 @@ class Location {
 	factory Location.fromJson(Map<String, dynamic> json) {
 		return new Location(lat: json['lat'],
 							 lng: json['lng'],
-               location_name: "", // TODO: maybe store location_name in database
+               location_name: json['location_name'], 
                );
 	}
 
   Map<String, dynamic> toJson() {
-    return {'lat': lat, 'lng': lng};
+    return {'lat': lat, 'lng': lng, 'location_name': location_name};
   }
 }
 

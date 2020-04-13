@@ -49,10 +49,10 @@ def post_vendor(vendor):
 	try:
 		location = Location()
 		if 'location' in vendor:
-			location = Location(lat=vendor['location']['lat'], lng=vendor['location']['lng'])
+			location = create_location(vendor['location'])
 		schedule = Schedule()
 		if 'schedule' in vendor:
-			schedule = Schedule(end=parse_string_to_datetime(vendor['schedule']['end']), start=parse_string_to_datetime(vendor['schedule']['start']))
+			schedule = create_schedule(vendor['schedule'])
 		print("schedule is done!")
 		vendor_document = Vendor(
 			username = vendor['username'],
@@ -75,12 +75,19 @@ def update_vendor_by_username(username, update_vendor):
 		if 'tags' in update_vendor:
 			vendor.update(tags = update_vendor['tags'])
 		if 'location' in update_vendor:
-			vendor.update(location = Location(lat=update_vendor['location']['lat'], lng=update_vendor['location']['lng']))
+			vendor.update(location = create_location(update_vendor['location']))
 		if 'schedule' in update_vendor:
-			vendor.update(schedule = Schedule(end=parse_string_to_datetime(update_vendor['schedule']['end']), start=parse_string_to_datetime(update_vendor['schedule']['start'])))
+			vendor.update(schedule = create_schedule(update_vendor['schedule']))
 		if 'description' in update_vendor:
 			vendor.update(description = update_vendor['description'])
 		vendor.save()
 		return add_vendor_info(objects_to_json(vendor))
 	except Vendor.DoesNotExist:
 		return "contain invalid truck usernames"
+
+def create_location(location):
+	return Location(lat=location['lat'], lng=location['lng'], location_name=location.get('location_name', ''))
+
+def create_schedule(schedule):
+	return Schedule(end=parse_string_to_datetime(schedule['end']), start=parse_string_to_datetime(schedule['start']))
+

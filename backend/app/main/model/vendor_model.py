@@ -7,6 +7,7 @@ class VendorTags():
 class Location(db.EmbeddedDocument):
     lat = db.FloatField(required=True, default=0)
     lng = db.FloatField(required=True, default=0)
+    location_name = db.StringField(default="")
 
 class Schedule(db.EmbeddedDocument):
     start = db.DateTimeField(required=True, default=datetime.datetime.now)

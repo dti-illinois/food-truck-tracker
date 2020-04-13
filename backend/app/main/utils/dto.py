@@ -6,6 +6,7 @@ class VendorDto:
     location = api.model('location', {
     	'lat': fields.Float(required=True),
     	'lng': fields.Float(required=True),
+        'location_name': fields.String(default=''),
     	})
     schedule = api.model('schedule', {
     	'start': fields.DateTime(required=True),
