@@ -63,6 +63,7 @@ flutter:
      - images/icon-unselected.png
      - images/marker.png
      - images/current-location.png
+     - images/icon-x-orange.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
