@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../utils/Utils.dart';
 import '../widgets/display_type_tab.dart';
+import '../views/search_panel.dart';
 
 enum ListMapDisplayType { List, Map }
 
@@ -58,7 +59,8 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                       label: 'Search',child:
                     IconButton(
                       icon: Image.asset('images/icon-search.png'),
-                      onPressed: () { /* TODO */ 
+                      onPressed: () {
+                        Navigator.pushNamed(context, SearchPanel.id);
                       },
                     ),
                   ))
