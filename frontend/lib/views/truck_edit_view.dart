@@ -364,8 +364,9 @@ void _onTagListItemTap(Tag tag) {
     truck.location = location;
     updateFoodTruck(truck).then((bool isSuccess) {
       if(isSuccess) {
-         Navigator.pushNamed(context, TruckManagementView.id, 
-        arguments: truck.username);
+        Navigator.of(context).pop();
+        //  Navigator.pushNamed(context, TruckManagementView.id, 
+        // arguments: truck.username);
       }
     });
   }
