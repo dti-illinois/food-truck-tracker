@@ -28,6 +28,25 @@ class VendorList(Resource):
         query = format_query(args, query)
         return get_vendors(query, args.get('limit', 0),args.get('skip', 0))
 
+
+    @api.doc('create a vendor')
+    @api.marshal_with(_vendor_detail)
+    @api.expect(_vendor_detail, validate=True)
+    def post(self):
+        """
+        example post body:
+            Content-Type: application/json
+            {
+                "username":"james",
+                "displayed_name":"j",
+                "location":{"lat": 11.32, "lng": 51.42},
+                "schedule":{"start": "2020-03-12T12:00:00", "end": "2020-03-12T14:00:00"},
+                "description":"1",
+                "tags":["a","b"]
+            }
+        """
+        return post_vendor(request.get_json())
+
 @api.route('/<string:vendor_username>')
 @api.param('vendor_username', 'The Vendor identifier')
 @api.response(404, 'User not found.')
@@ -42,25 +61,16 @@ class Vendor(Resource):
         else:
             return vendor
 
-    @api.doc('create a vendor')
+    @api.doc('update a vendor')
     @api.marshal_with(_vendor_detail)
-    def post(self, vendor_username):
-        """
-        example post body:
-            Content-Type: application/json
-            {
-                "username":"james",
-                "displayed_name":"j",
-                "location":{"lat": 11.32, "lng": 51.42},
-                "schedule":{"start": "2020-03-12T12:00:00", "end": "2020-03-12T14:00:00"},
-                "description":"1",
-                "tags":["a","b"]
-            }
-        """
-        req_data = request.get_json()
-        req_data['username'] = vendor_username
-        post_vendor(req_data)
-        return get_vendor_by_username(vendor_username)
+    def put(self, vendor_username):
+        """get a vendor with its identifier"""
+        vendor = update_vendor_by_username(vendor_username, request.get_json())
+        if not vendor:
+            api.abort(404)
+        else:
+            return vendor
+
       
 @api.route('/fav_trucks/<username>')
 @api.param('username', 'The User identifier')

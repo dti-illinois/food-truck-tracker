@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UiColors {
   static const Color illinoisBlue = Color(0xff002855);
@@ -104,11 +105,22 @@ class LocationUtils {
 }
 
 class AssetUtils {
-
   static Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
+  }
+}
+
+class TimeUtils{
+  static String formatTimestamp(String timestamp) {
+    return DateFormat("hh:mm a").format(DateTime.parse(timestamp));
+  }
+  static String formatTimeOfDay(TimeOfDay tod){
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm();  //"6:00 AM"
+    return format.format(dt);
   }
 }

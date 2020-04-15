@@ -32,7 +32,11 @@ class User extends ChangeNotifier {
 
   void toggleFavTruck(String truckname) {
     _userModel?.toggleFavTruck(truckname);
-    notifyListeners();
+    putUser(_userModel).then((bool isSuccess) {
+        if(isSuccess) {
+          notifyListeners();
+        }
+      });
   }
 
   UserType get userType {
@@ -41,6 +45,10 @@ class User extends ChangeNotifier {
 
   void set userType(UserType type) {
    _userModel.userType = type;
+  }
+
+  String get username {
+    return _userModel.username;
   }
 
   Future<void> updateUser(String username, UserType type) async {
@@ -67,7 +75,12 @@ Future<UserModel> getUser(String username) async {
   }
 }
 
-void putUser(UserModel user) {
-  // TODO: implement put 
-  // final response = await http.get(USER_URL + username);
+Future<bool> putUser(UserModel user) async {
+  final response = await http.put('${host}/vendor/fav_trucks/${user.username}', 
+  headers: {"Content-Type": "application/json"},
+    body: json.encode(user.toJson()));
+  if (response.statusCode == 200) {
+    return true;
+  } 
+  return false;
 }

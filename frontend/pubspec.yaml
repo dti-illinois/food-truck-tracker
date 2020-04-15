@@ -30,6 +30,7 @@ dependencies:
   flutter_tagging: 2.2.0+3
   provider: ^4.0.4
   flutter_polyline_points: ^0.1.0
+  google_maps_place_picker: ^0.9.2
 
 dev_dependencies:
   flutter_test:
@@ -61,9 +62,13 @@ flutter:
      - images/icon-down.png
      - images/icon-selected.png
      - images/icon-unselected.png
+     - images/icon-check-example.png
+     - images/icon-edit.png
      - images/marker.png
      - images/current-location.png
      - images/icon-x-orange.png
+     - images/close-blue.png
+     - images/icon-x-orange-small.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

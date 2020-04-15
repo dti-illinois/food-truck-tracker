@@ -1,5 +1,10 @@
-from mongoengine import Q
+from bson import json_util
+import dateutil.parser
+from datetime import datetime
 from functools import reduce
+from mongoengine import Q
+
+ISO_FORMAT = '%Y-%m-%dT%H:%M:%S.000'
 
 def format_query(args, query):
     query_parts = []
@@ -25,3 +30,10 @@ def  prepare_condition(field, operator, value):
     field = (s for s in field if s)
     field = '__'.join(field)
     return Q(**{field: value})
+
+def parse_string_to_datetime(timestamp):
+	# return dateutil.parser.isoparse(timestamp)
+	return datetime.strptime(timestamp, ISO_FORMAT)
+
+def objects_to_json(object):
+	return json_util.loads(object.to_json())

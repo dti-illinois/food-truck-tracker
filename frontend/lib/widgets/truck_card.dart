@@ -68,7 +68,8 @@ class TruckCardState extends State<TruckCard> {
 		TruckModel truck = widget.truck;
 		double distance = widget.center != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng) : -1;
 		String distanceString = distance >= 0 ? "${distance.toStringAsFixed(1)} mi away" : ""; 
-	  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
+	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}" : "Closed";
+
 	    return Container(
 	           padding: EdgeInsets.fromLTRB(10,10,10,10),
 	           height: 210,

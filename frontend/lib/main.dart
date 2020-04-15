@@ -5,6 +5,7 @@ import 'views/login_view.dart';
 import 'views/search_panel.dart';
 import 'views/truck_detail.dart';
 import 'views/truck_direction_map_view.dart';
+import 'views/truck_edit_view.dart';
 import 'views/truck_management_view.dart';
 import 'views/truck_panel.dart';
 
@@ -48,6 +49,12 @@ class FoodTruckTracker extends StatelessWidget {
               builder: (context) {
                 MapDirectionViewArguments args = settings.arguments;
                 return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
+              },
+            );
+          } else if (settings.name == TruckEditView.id) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return TruckEditView(truck: settings.arguments);
               },
             );
           }
