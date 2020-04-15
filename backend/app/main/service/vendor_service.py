@@ -6,8 +6,13 @@ from bson import json_util
 ISO_FORMAT = 'YYYY-MM-DDTHH:MM:SS'
 STRPTIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
-def get_all_vendors():
-	ret = json_util.loads(Vendor.objects().to_json())
+def get_vendors(query={}, limit=0, skip=0):
+	vendors = []
+	# if len(query) == 0:
+	# 	vendors = Vendor.objects()
+	# else:
+	vendors = Vendor.objects.filter(query)
+	ret = json_util.loads(vendors.to_json())
 	return list(map(add_vendor_info, ret))
 
 def get_vendor_by_username(username):

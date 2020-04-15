@@ -35,11 +35,9 @@ Future<List<TruckModel>> searchTrucks({String searchInput}) async {
   if (searchInput.isEmpty) {
       return null;
     }
-    return getFoodTruckList(false, null); // TODO: remove this and impl search func 
     http.Response response;
     try {
-      // var params = _constructSearchParams(searchInput);
-      // response = (Config().eventsOrConvergeUrl != null) ? await Network().get('${Config().eventsOrConvergeUrl}$params', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+      response = await http.get(host+'/vendor/?displayed_name=${searchInput}');
     } catch (e) {
       print('Failed to search events with keyword: $searchInput');
       print(e.toString());

@@ -16,3 +16,10 @@ class Vendor(db.Document):
     schedule = db.EmbeddedDocumentField(Schedule)
     description = db.StringField()
     tags = db.ListField(db.StringField())
+
+    meta = {'indexes': [
+        {'fields': ['$displayed_name', "$description"],
+         'default_language': 'english',
+         'weights': {'displayed_name': 10, 'description': 2}
+        }
+    ]}

@@ -1,12 +1,17 @@
 from flask import request
-from flask_restx import Resource
+from flask_restx import Resource, reqparse
 
 from ..utils.dto import VendorDto
+from ..utils.utils import format_query
 from ..service.vendor_service import *
 
 api = VendorDto.api
 _vendor = VendorDto.vendor
 _vendor_detail = VendorDto.vendor_detail
+parser = reqparse.RequestParser()
+parser.add_argument('username', action='append')
+parser.add_argument('displayed_name', type=str, location='args')
+parser.add_argument('tags', action='append')
 
 @api.route('/home')
 class Home(Resource):
@@ -18,8 +23,10 @@ class VendorList(Resource):
     @api.doc('list_of_registered_vendors')
     @api.marshal_list_with(_vendor)
     def get(self):
-        """List all vendors"""
-        return get_all_vendors()
+        args = parser.parse_args()
+        query = dict()
+        query = format_query(args, query)
+        return get_vendors(query, args.get('limit', 0),args.get('skip', 0))
 
 @api.route('/<string:vendor_username>')
 @api.param('vendor_username', 'The Vendor identifier')
