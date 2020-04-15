@@ -68,7 +68,7 @@ class TruckCardState extends State<TruckCard> {
 	Widget build(BuildContext context) {
 		TruckModel truck = widget.truck;
 		double distance = LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng); 
-	  	String scheduleString = truck.isOpen ? "Is Open, from ${truck.schedule.start} - ${truck.schedule.end}" : "Closed";
+	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}" : "Closed";
 	    return Container(
 	           padding: EdgeInsets.fromLTRB(10,10,10,10),
 	           height: 210,

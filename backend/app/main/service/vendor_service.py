@@ -2,17 +2,15 @@ from ..model.vendor_model import *
 from ..model.user_model import User 
 from datetime import date, datetime, timezone
 from bson import json_util
-
-ISO_FORMAT = 'YYYY-MM-DDTHH:MM:SS'
-STRPTIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+from ..utils.utils import parse_string_to_datetime, objects_to_json
 
 def get_all_vendors():
-	ret = json_util.loads(Vendor.objects().to_json())
+	ret = objects_to_json(Vendor.objects())
 	return list(map(add_vendor_info, ret))
 
 def get_vendor_by_username(username):
 	try:
-		ret = json_util.loads(Vendor.objects.get(username=username).to_json())
+		ret = objects_to_json(Vendor.objects.get(username=username))
 		return add_vendor_info(ret)
 	except Vendor.DoesNotExist:
 		return None
@@ -48,16 +46,48 @@ def add_vendor_info(vendor):
 	return vendor
 
 def post_vendor(vendor):
-	vendor_document = Vendor()
-	vendor_document.username = vendor['username']
-	vendor_document.displayed_name = vendor['displayed_name']
-	vendor_document.location = Location()
-	vendor_document.location.lat = vendor['location']['lat']
-	vendor_document.location.lng = vendor['location']['lng']
-	vendor_document.schedule = Schedule()
-	vendor_document.schedule.end = datetime.strptime(vendor['schedule']['end'], STRPTIME_FORMAT)
-	vendor_document.schedule.start = datetime.strptime(vendor['schedule']['start'], STRPTIME_FORMAT)
-	vendor_document.description = vendor['description']
-	vendor_document.tags = vendor['tags']
-	vendor_document = vendor_document.save()
-	return json_util.loads(vendor_document.to_json())
+	try:
+		location = Location()
+		if 'location' in vendor:
+			location = create_location(vendor['location'])
+		schedule = Schedule()
+		if 'schedule' in vendor:
+			schedule = create_schedule(vendor['schedule'])
+		print("schedule is done!")
+		vendor_document = Vendor(
+			username = vendor['username'],
+			displayed_name = vendor['displayed_name'],
+			location = location,
+			schedule = schedule,
+			description = vendor.get('description', ''),
+			tags = vendor.get('tags', ''),
+		)
+		vendor_document = vendor_document.save()
+		return get_vendor_by_username(vendor['username'])
+	except:
+		return "Error Occurred"
+
+def update_vendor_by_username(username, update_vendor):
+	try:
+		vendor = Vendor.objects.get(username=username)
+		if 'displayed_name' in update_vendor:
+			vendor.update(displayed_name = update_vendor['displayed_name'])
+		if 'tags' in update_vendor:
+			vendor.update(tags = update_vendor['tags'])
+		if 'location' in update_vendor:
+			vendor.update(location = create_location(update_vendor['location']))
+		if 'schedule' in update_vendor:
+			vendor.update(schedule = create_schedule(update_vendor['schedule']))
+		if 'description' in update_vendor:
+			vendor.update(description = update_vendor['description'])
+		vendor.save()
+		return add_vendor_info(objects_to_json(vendor))
+	except Vendor.DoesNotExist:
+		return "contain invalid truck usernames"
+
+def create_location(location):
+	return Location(lat=location['lat'], lng=location['lng'], location_name=location.get('location_name', ''))
+
+def create_schedule(schedule):
+	return Schedule(end=parse_string_to_datetime(schedule['end']), start=parse_string_to_datetime(schedule['start']))
+

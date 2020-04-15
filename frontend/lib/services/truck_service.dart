@@ -30,3 +30,16 @@ Future<TruckModel> getFoodTruck(String username) async {
     throw Exception('Failed to load trucks');
   }
 }
+
+Future<bool> updateFoodTruck(TruckModel truck) async {
+  print( truck.toJson());
+  final response = await http.put(host + '/vendor/' + truck.username,
+       headers: {"Content-Type": "application/json"},
+      body: json.encode(truck.toJson())
+    );
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    return false;
+  }
+}
