@@ -7,16 +7,16 @@ var host = 'http://0.0.0.0:5000';
 Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
   final response = await http.get(host+'/vendor/');
   if (response.statusCode == 200) {
- 	List<Map<String, dynamic>> l = List.from(jsonDecode(response.body));
- 	List<TruckModel> trucks = [];
- 	l.forEach((model) {
- 		TruckModel truck = TruckModel.fromJson(model);
- 		if ((tag == null || truck.tags.contains(tag)) 
- 			&& (!onlyOpen || truck.isOpen)) {
- 			    trucks.add(truck);
- 		}
- 	});
-    return trucks;
+   	List<Map<String, dynamic>> l = List.from(jsonDecode(response.body));
+   	List<TruckModel> trucks = [];
+   	l.forEach((model) {
+   		TruckModel truck = TruckModel.fromJson(model);
+   		if ((tag == null || truck.tags.contains(tag)) 
+   			&& (!onlyOpen || truck.isOpen)) {
+   			    trucks.add(truck);
+   		}
+   	});
+      return trucks;
   } else {
     throw Exception('Failed to load trucks');
   }
@@ -29,6 +29,33 @@ Future<TruckModel> getFoodTruck(String username) async {
   } else {
     throw Exception('Failed to load trucks');
   }
+}
+
+Future<List<TruckModel>> searchTrucks({String searchInput}) async {
+  if (searchInput.isEmpty) {
+      return null;
+    }
+    http.Response response;
+    try {
+      response = await http.get(host+'/vendor/?displayed_name=${searchInput}');
+    } catch (e) {
+      print('Failed to search events with keyword: $searchInput');
+      print(e.toString());
+      return null;
+    }
+    if ((response != null) && (response.statusCode == 200)) {
+      List<Map<String, dynamic>> l = List.from(jsonDecode(response.body));
+      List<TruckModel> trucks = [];
+      l.forEach((model) {
+        TruckModel truck = TruckModel.fromJson(model);
+        trucks.add(truck);
+      });
+      return trucks;
+    } else {
+      print('Failed to search events with keyword: $searchInput');
+      print(response?.body);
+      return null;
+    }
 }
 
 Future<bool> updateFoodTruck(TruckModel truck) async {

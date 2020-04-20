@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/user_service.dart';
 import 'views/login_view.dart';
+import 'views/search_panel.dart';
 import 'views/truck_detail.dart';
 import 'views/truck_direction_map_view.dart';
 import 'views/truck_edit_view.dart';
@@ -61,6 +62,7 @@ class FoodTruckTracker extends StatelessWidget {
       routes: {
         TruckPanel.id: (context) => TruckPanel(),
         LoginView.id: (context) => LoginView(),
+        SearchPanel.id: (context) => SearchPanel(),
       },
       theme: ThemeData(
           primaryColor: Color(0xff002855),

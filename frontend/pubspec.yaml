@@ -66,6 +66,7 @@ flutter:
      - images/icon-edit.png
      - images/marker.png
      - images/current-location.png
+     - images/icon-x-orange.png
      - images/close-blue.png
      - images/icon-x-orange-small.png
 

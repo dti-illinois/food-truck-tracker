@@ -4,8 +4,10 @@ from datetime import date, datetime, timezone
 from bson import json_util
 from ..utils.utils import parse_string_to_datetime, objects_to_json
 
-def get_all_vendors():
-	ret = objects_to_json(Vendor.objects())
+def get_vendors(query={}, limit=0, skip=0):
+	vendors = []
+	vendors = Vendor.objects.filter(query)
+	ret = json_util.loads(vendors.to_json())
 	return list(map(add_vendor_info, ret))
 
 def get_vendor_by_username(username):

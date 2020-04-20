@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/truck_model.dart';
 import '../models/user_model.dart';
 import '../services/truck_service.dart';
+import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_detail.dart';
 import '../widgets/truck_card.dart';
@@ -33,7 +34,7 @@ class TruckListState extends State<FoodTruckListView> {
       ),
       itemBuilder: (context, i) {
       	TruckModel truck = widget.trucks[i];
-        return TruckCard(truck: truck, center: widget.center, onCardTap: () {_onCardTap(truck);});
+        return TruckCard(truck: truck, center: widget.center, onCardTap: () {_onCardTap(truck);}, isFavoriteVisible: User().userType == UserType.User);
       },
       itemCount: widget.trucks.length,
     );
