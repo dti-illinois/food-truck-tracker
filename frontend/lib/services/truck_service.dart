@@ -16,7 +16,7 @@ Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
    			    trucks.add(truck);
    		}
    	});
-      return trucks;
+    return trucks;
   } else {
     throw Exception('Failed to load trucks');
   }
