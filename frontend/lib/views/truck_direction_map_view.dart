@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/truck_model.dart';
 import '../utils/Utils.dart';
+import 'package:geolocator/geolocator.dart';
 import '../secret.dart';
 
 const double CAMERA_ZOOM = 13;
@@ -28,6 +29,9 @@ class MapDirectionView extends StatefulWidget {
 }
 
 class MapDirectionState extends State<MapDirectionView> {
+	Geolocator geolocator = Geolocator();
+	Position userLocation;
+
 	Completer<GoogleMapController> _controller = Completer();
 	// this set will hold my markers
 	Set<Marker> _markers = {};
@@ -42,11 +46,17 @@ class MapDirectionState extends State<MapDirectionView> {
 	BitmapDescriptor destinationIcon;
 	LatLng _sourceLocation;
 	LatLng _destLocation;
+
+
 	@override 
 	void initState() {
 		super.initState();
+		_getLocation().then((position) {
+			userLocation = position;
+		});
 		_setSourceAndDestinationIcons();
-		_sourceLocation = LatLng(widget.curLocation.lat, widget.curLocation.lng);
+		_sourceLocation = LatLng(userLocation.latitude, userLocation.longitude);
+		//_sourceLocation = LatLng(widget.curLocation.lat, widget.curLocation.lng);
 		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 	}
 
@@ -87,7 +97,7 @@ class MapDirectionState extends State<MapDirectionView> {
 	setPolylines() async {
 		await
 		  polylinePoints?.getRouteBetweenCoordinates(
-		     GOOGLE_MAP_API_KEY,
+					GOOGLE_MAP_API_KEY,
 		     _sourceLocation.latitude,
 		     _sourceLocation.longitude,
 		     _destLocation.latitude,
@@ -117,6 +127,17 @@ class MapDirectionState extends State<MapDirectionView> {
 		  // end up showing up on the map
 		  _polylines.add(polyline);
 		});
+	}
+
+	Future<Position> _getLocation() async {
+		var currentLocation;
+		try {
+			currentLocation = await geolocator.getCurrentPosition(
+					desiredAccuracy: LocationAccuracy.best);
+		} catch (e) {
+			currentLocation = null;
+		}
+		return currentLocation;
 	}
 
 	@override
