@@ -9,7 +9,8 @@ class TruckCard extends StatefulWidget {
 	  Location center;
 	  GestureTapCallback onCardTap;
 	  bool isFavoriteVisible;
-	  TruckCard({this.truck, this.center, this.onCardTap, this.isFavoriteVisible=false});
+	  bool isTagsVisible; 
+	  TruckCard({this.truck, this.center, this.onCardTap, this.isFavoriteVisible=false, this.isTagsVisible=false});
 
 	  @override
 	  TruckCardState createState() => TruckCardState(); 
@@ -17,6 +18,8 @@ class TruckCard extends StatefulWidget {
 
 class TruckCardState extends State<TruckCard> {
 	bool _isFavorite;
+	static const EdgeInsets _iconPadding = EdgeInsets.only(right: 8);
+	static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
 
 	@override
 	void initState() {
@@ -36,6 +39,9 @@ class TruckCardState extends State<TruckCard> {
 	}
 
 	Widget _buildTags(TruckModel truck) {
+	if(!widget.isTagsVisible) {
+		return Container();
+	}
   	List<Widget> widgetTags = [];
   	for(String tag in TagHelper.tagsToList(truck.tags)) {
   		if(tag?.isEmpty ?? true) {
@@ -43,7 +49,7 @@ class TruckCardState extends State<TruckCard> {
   		}
   		widgetTags.add(Container(
   				alignment: Alignment.center,
-  				padding: EdgeInsets.symmetric(horizontal: 20),
+  				padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
   				margin: EdgeInsets.only(left: 10, top: 10),
   				height: 30,
   				decoration: BoxDecoration(
@@ -52,80 +58,148 @@ class TruckCardState extends State<TruckCard> {
   				), // BoxDecoration
   				child: Text(
   					tag, style: TextStyle(
-  					color: UiColors.white
+  					color: UiColors.white,
+  					fontSize: 14,
   					), // TextStyle
   				) // Text
   		)); // Container
   	}
-  	return Row(crossAxisAlignment: CrossAxisAlignment.center, children: widgetTags);
+  	return 
+  	widgetTags.length == 0 ? Container() : 
+  	Column(children: <Widget>[
+			Divider(height: 2, color: Colors.black87),
+  			Row(crossAxisAlignment: CrossAxisAlignment.center, children: widgetTags)
+  		]);
   }
 
 	 void toggleFavTruck(String truckUsername) {
 	  	User().toggleFavTruck(truckUsername);
 	  }
-	@override
-	Widget build(BuildContext context) {
-		TruckModel truck = widget.truck;
-		double distance = widget.center != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng) : -1;
-		String distanceString = distance >= 0 ? "${distance.toStringAsFixed(1)} mi away" : ""; 
-	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}" : "Closed";
 
-	    return Container(
-	           padding: EdgeInsets.fromLTRB(10,10,10,10),
-	           height: 210,
-	           width: double.maxFinite,
-	           child: Card(
-	             elevation: 5,
-	             child: InkWell(
-	               onTap: widget.onCardTap,
-		           child: Padding(
-		             padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-		             child: Column(
-		                 children: <Widget>[
-		                   Row(
-		                     children: <Widget>[
-		                       Text(truck.displayedName, 
-		                       		style: TextStyle(
-				                    fontSize: 18,
-				                    color: UiColors.darkSlateBlueTwo,
-				                    letterSpacing: 1),), 
-		                       Visibility(
+	  Widget _truckTitle() {
+	  	return Padding(
+      		padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
+      		child: Text(widget.truck.displayedName, 
+	               		style: TextStyle(
+	                    fontSize: 20,
+	                    color: UiColors.darkSlateBlueTwo,
+	                    fontWeight: FontWeight.bold,
+	                    letterSpacing: 1),
+	        ), // Text  
+      	);
+	  }
+	  Widget _truckFavIcon() {
+	  	return  Visibility(
 		                       	visible: widget.isFavoriteVisible,
 		                       	child: GestureDetector(
-					              onTap: () {toggleFavTruck(truck.username);},
+					              onTap: () {toggleFavTruck(widget.truck.username);},
 					              child: Semantics(
 				                    label: _isFavorite ? 'Remove From Favorites': 'Add To Favorites',
 				                    button: true,
 				                    child:Padding(padding: EdgeInsets.all(3), 
 				                      child: Image.asset(_isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))) // Semantic
 	          					)// GestureDetector
-		                       ) // Visibility
-		                     ],
-		                     mainAxisAlignment: MainAxisAlignment.spaceBetween
-		                   ), // Row
-		                   Row(
-		                     children: <Widget>[
-		                        Column(
-		                            crossAxisAlignment: CrossAxisAlignment.start,
-		                           children: <Widget>[
-		                             Text(scheduleString),
-		                             Text(distanceString),
-		                           ], // WidgetList of Column
-		                         ),//Column
-		                       Image(
-		                         image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-		                         fit:BoxFit.scaleDown,
-		                         height: 100
-		                       ),
-		                       
-		                     ],// WidgetList of Row
-		                     mainAxisAlignment: MainAxisAlignment.spaceBetween
-		                   ), 
-		                   Divider(height: 2, color: Colors.black87),
-		                   _buildTags(truck),
-		                 ], // Widget list
-		               ), // Column
-		           ), // Padding
+		        ); // Visibility
+	  }
+
+	  Widget _scheduleDetail() {
+	  	TruckModel truck = widget.truck;
+	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}" : "Closed";
+	  	return Padding(
+		      padding: _detailPadding,
+		      child: Row(
+		        children: <Widget>[
+		        Container(
+		        	child:Image.asset('images/icon-time.png'),
+		        	height: 20),
+		          Padding(
+		            padding: _iconPadding,
+		          ),
+		          Text(scheduleString, overflow: TextOverflow.ellipsis,
+		              maxLines: 1,
+		              style: TextStyle(
+		                  fontFamily: 'ProximaNovaMedium',
+		                  fontSize: 14,
+		                  color: UiColors.greyishBrown)),
+		        ],
+		      ),
+		    );
+	  }
+
+	  Widget _locationDetail() {
+	  	TruckModel truck = widget.truck;
+	  	double distance = widget.center != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng) : -1;
+		String distanceString = distance >= 0 ? "${distance.toStringAsFixed(1)} mi away" : ""; 
+	  	
+	  	return distanceString == "" ? Container() : Padding(
+		      padding: _detailPadding,
+		      child: Row(
+		        children: <Widget>[
+		        Container(
+		          child: Image.asset('images/icon-location.png'),
+		          height: 20,),
+		          Padding(
+		            padding: _iconPadding,
+		          ),
+		          Text(distanceString, overflow: TextOverflow.ellipsis,
+		              maxLines: 1,
+		              style: TextStyle(
+		                  fontFamily: 'ProximaNovaMedium',
+		                  fontSize: 14,
+		                  color: UiColors.greyishBrown)),
+		        ],
+		      ),
+		    );
+	  }
+	@override
+	Widget build(BuildContext context) {
+		TruckModel truck = widget.truck;
+		
+	    return Container(
+	           padding: EdgeInsets.fromLTRB(10,10,10,10),
+	           width: double.maxFinite,
+	           child: Card(
+	             elevation: 5,
+	             child: InkWell(
+	               onTap: widget.onCardTap,
+		           child: Column(
+		           		children: <Widget>[
+		                 	Container(height: 4, color: UiColors.illinoisOrange),
+		                 	Padding(
+				             padding: EdgeInsets.all(10),
+				             child: Column(
+				                 children: <Widget>[
+				                   Row(
+				                     children: <Widget>[
+				                       _truckTitle(),
+				                       _truckFavIcon(),
+				                     ],
+				                     mainAxisAlignment: MainAxisAlignment.spaceBetween
+				                   ), // Row
+				                   Row(
+				                     children: <Widget>[
+				                        Column(
+				                            crossAxisAlignment: CrossAxisAlignment.start,
+				                           	children: <Widget>[
+				                             _scheduleDetail(),
+				                             _locationDetail(),
+				                           ], // WidgetList of Column
+				                         ),//Column
+				                       Image(
+				                         image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+				                         fit:BoxFit.scaleDown,
+				                         height: 70
+				                       ),
+				                       
+				                     ],// WidgetList of Row
+				                     mainAxisAlignment: MainAxisAlignment.spaceBetween
+				                   ), 
+				                   _buildTags(truck),
+				                 ], // Widget list
+				               ), // Column
+				           ), // Padding
+		           		]
+		           	), // Column
 	           ), // InkWell
 	           ), // Card
 	        );

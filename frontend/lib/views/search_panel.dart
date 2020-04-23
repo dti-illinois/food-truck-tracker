@@ -183,7 +183,7 @@ class _SearchPanelState extends State<SearchPanel> {
 		    itemCount: trucksCount,
 		    itemBuilder: (context, i) {
 		      	TruckModel truck = _trucks[i];
-				return TruckCard(truck: truck, onCardTap: () {_onCardTap(truck);});
+				return TruckCard(truck: truck, onCardTap: () {_onCardTap(truck);}, isTagsVisible:false);
 		    },
 		  );
 		}
