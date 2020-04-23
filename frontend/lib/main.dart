@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/user_service.dart';
 import 'views/login_view.dart';
+import 'views/search_panel.dart';
 import 'views/truck_detail.dart';
 import 'views/truck_direction_map_view.dart';
+import 'views/truck_edit_view.dart';
 import 'views/truck_management_view.dart';
 import 'views/truck_panel.dart';
 
@@ -49,11 +51,18 @@ class FoodTruckTracker extends StatelessWidget {
                 return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
               },
             );
+          } else if (settings.name == TruckEditView.id) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return TruckEditView(truck: settings.arguments);
+              },
+            );
           }
       },
       routes: {
         TruckPanel.id: (context) => TruckPanel(),
         LoginView.id: (context) => LoginView(),
+        SearchPanel.id: (context) => SearchPanel(),
       },
       theme: ThemeData(
           primaryColor: Color(0xff002855),

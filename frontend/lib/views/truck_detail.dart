@@ -129,7 +129,7 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   Widget _truckLocationDetail() {
-    String locationText =  "${truck.location.lat}, ${truck.location.lng}";
+    String locationText =  !truck.location.location_name.isEmpty ? truck.location.location_name : "(${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
     return 
         GestureDetector(
           onTap: _onLoacationDetailTapped,
@@ -158,7 +158,7 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   Widget _truckScheduleDetail() {
-  	String displayTime = "${truck.schedule.start} - ${truck.schedule.end}";
+  	String displayTime = "${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}";
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(

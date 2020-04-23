@@ -63,3 +63,46 @@ class SliverToutHeaderBar extends SliverAppBar {
       )
   );
 }
+
+
+// SimpleAppBar
+
+class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWidget {
+  final BuildContext context;
+  final Widget titleWidget;
+  final bool backVisible;
+  final String backIconRes;
+  final Function onBackPressed;
+  final bool searchVisible;
+
+  final semanticsSortKey;
+
+  SimpleHeaderBarWithBack({@required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1) });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(sortKey:semanticsSortKey,child:AppBar(
+      leading: Visibility(visible: backVisible, child: Semantics(
+          label: 'Back',
+          button: true,
+          excludeSemantics: true,
+          child: IconButton(
+              icon: Image.asset(backIconRes),
+              onPressed: _onTapBack)),),
+      title: titleWidget,
+      centerTitle: true,
+      actions: <Widget>[],
+    ));
+  }
+
+  void _onTapBack() {
+    if (onBackPressed != null) {
+      onBackPressed();
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}

@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
+import '../views/truck_edit_view.dart';
 import '../widgets/header_bar.dart';
 
 class TruckManagementView extends StatefulWidget {
@@ -43,9 +44,12 @@ class _TruckManagementState extends State<TruckManagementView> {
     });
   }
 
- 
+  void _editFoodTruck() {
+    Navigator.pushNamed(context, TruckEditView.id, 
+      arguments: truck);
+  }
 
-   Widget _truckTitle() {
+  Widget _truckTitle() {
     bool starVisible = true; // TODO: depends on user type
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -62,7 +66,16 @@ class _TruckManagementState extends State<TruckManagementView> {
                     letterSpacing: 1),
               ),
             ),
-          ],
+            GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _editFoodTruck,
+                child: Semantics(
+                    label: 'Edit',
+                    button: true,
+                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
+                      child: Image.asset('images/icon-edit.png')))
+            ), // GestureDetector
+          ], // Row Widgets
     ));
   }
 
@@ -95,7 +108,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  " (${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
+    String locationText =  !truck.location.location_name.isEmpty ? truck.location.location_name : "(${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
   	return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Row(
@@ -120,7 +133,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   }
 
   Widget _truckScheduleDetail() {
-  	String displayTime = "${truck.schedule.start} - ${truck.schedule.end}";
+  	String displayTime = "${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}";
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(
@@ -153,9 +166,9 @@ class _TruckManagementState extends State<TruckManagementView> {
   Widget _truckTags() {
   	List<Widget> widgetTags = [];
   	for(String tag in TagHelper.tagsToList(truck.tags)) {
+      print(tag);
   		widgetTags.add(Container(
-  				alignment: Alignment.center,
-  				padding: EdgeInsets.symmetric(horizontal: 20),
+  				padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
   				margin: EdgeInsets.only(left: 10),
   				height: 30,
   				decoration: BoxDecoration(
@@ -169,7 +182,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   				) // Text
   		)); // Container
   	}
-  	return Row(children: widgetTags);
+  	return Wrap(runSpacing: 5, children: widgetTags);
   }
 
   Widget _truckDescription() {

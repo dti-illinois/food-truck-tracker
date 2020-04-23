@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-class TruckModel{
+class TruckModel {
 	String displayedName;
 	String username;
 	Location location; 
@@ -25,6 +25,18 @@ class TruckModel{
         isOpen: json['is_open'],
 			);
 	}
+
+  Map<String, dynamic> toJson() {
+    // print(displayedName);
+    var map = {
+      'displayed_name': displayedName,
+      'location': location.toJson(),
+      'schedule': schedule.toJson(),
+      'description': description,
+      'tags': TagHelper.tagsToList(tags),
+    };
+    return map;
+  }
 }
 
 enum Tag { Savory, Sweet, Vegetarian, Free }
@@ -50,6 +62,9 @@ class TagHelper {
       }
       else if (tagString == 'Vegetarian') {
         return Tag.Vegetarian;
+      }
+      else if (tagString == 'Free') {
+        return Tag.Free;
       }
     }
     return null;
@@ -94,22 +109,42 @@ class Location {
 	double lat;
 	double lng;
 	String location_name;
-	Location({this.lat, this.lng});
+	Location({this.lat, this.lng, this.location_name});
 	factory Location.fromJson(Map<String, dynamic> json) {
 		return new Location(lat: json['lat'],
-							 lng: json['lng']);
+							 lng: json['lng'],
+               location_name: json['location_name'], 
+               );
 	}
+
+  Map<String, dynamic> toJson() {
+    return {'lat': lat, 'lng': lng, 'location_name': location_name};
+  }
 }
 
 class Schedule {
 	String start;
 	String end;
 	Schedule({this.start,this.end});
+  Schedule.fromTimeOfDay(TimeOfDay todStart, TimeOfDay todEnd) {
+    start = _formatTimeOfDay(todStart);
+    end = _formatTimeOfDay(todEnd);
+  }
 	factory Schedule.fromJson(Map<String, dynamic> json) {
-		return new Schedule(start: new DateFormat("hh:mm a").format(DateTime.parse(json['start'])), 
-			end: new DateFormat("hh:mm a").format(DateTime.parse(json['end'])));
+		return new Schedule(start: json['start'].split(new RegExp(r"\.|\+"))[0], 
+			end: json['end'].split(new RegExp(r"\.|\+"))[0]);
 	}
 	String toString() {
 		return '${this.start} - ${this.end}';
 	}
+
+  String _formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    return dt.toIso8601String();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'start': start, 'end': end};
+  }
 }

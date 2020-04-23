@@ -262,7 +262,7 @@ class TruckPanelState extends State<TruckPanel> {
 				children: <Widget>[
 					ExploreDisplayTypeHeader(
 		              displayType: _displayType,
-		              searchVisible: false, // TODO: set as true 
+		              searchVisible: true, // TODO: set as true 
 		              onTapList: () => _selectDisplayType(ListMapDisplayType.List),
 		              onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),
 		            ), // ExploreDisplayTypeHeader
