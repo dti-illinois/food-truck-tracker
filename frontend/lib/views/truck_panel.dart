@@ -3,7 +3,9 @@ import 'dart:async';
 
 import '../config.dart';
 import '../models/truck_model.dart';
+import '../models/user_model.dart';
 import '../services/truck_service.dart';
+import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_list_view.dart';
 import '../views/truck_map_view.dart';
@@ -36,6 +38,7 @@ class TruckPanelState extends State<TruckPanel> {
 	List<Filter> _truckFilters; 
 	List<String> _filterTagValues;
 	List<String> _filterWorkTimeValues;
+	List<String> _filterFavTruckValues;
 	bool _filterOptionsVisible; 
 	Location _location = Location(lat: LOCATION_LAT, lng: LOCATION_LNG); 
 	ScrollController _scrollController = ScrollController();
@@ -56,9 +59,13 @@ class TruckPanelState extends State<TruckPanel> {
 	void _loadTruckList() {
 		bool onlyOpen = _getOnlyOpenFilter(_truckFilters);
 		Tag tag = _getTruckTag(_truckFilters);
+		bool onlyFav = _getOnlyFavTruckFilter(_truckFilters);
 		_taskLoading = getFoodTruckList(onlyOpen, tag);
 		_taskLoading.then((List<TruckModel> trucks) {
 				_refresh(() {
+					if (onlyFav) {
+						trucks = trucks.where((truck) => User().isFavTruck(truck.username)).toList();
+					}
 					_trucks = trucks;
 					_taskLoading = null; 
 					_updateTrucksOnMap(_trucks);
@@ -97,14 +104,28 @@ class TruckPanelState extends State<TruckPanel> {
 	    return null;
 	}
 
+	bool _getOnlyFavTruckFilter(List<Filter> filters) {
+		for (Filter selectedFilter in filters) {
+	      if (selectedFilter.type == FilterType.FavTruck) {
+	        int index = selectedFilter.firstSelectedIndex;
+	        return index != 0;
+	      }
+	    }
+	    return false;
+	}
+
 	void _initFilters() {
 		_filterOptionsVisible = false;
 		_truckFilters = [new Filter(type: FilterType.Tag), new Filter(type:FilterType.WorkTime)];
+		if (User().userType == UserType.User) {
+			_truckFilters.add(new Filter(type: FilterType.FavTruck));
+		}
 		_filterTagValues = ["All Tags"];
 		for(Tag tag in Tag.values) {
 			_filterTagValues.add(TagHelper.tagToString(tag));
 		}
 		_filterWorkTimeValues = ["Is Open Now", "All Food Trucks"];
+		_filterFavTruckValues = ["All Trucks", "Liked"];
 	}
 
 	void _selectDisplayType (ListMapDisplayType displayType) {
@@ -180,6 +201,8 @@ class TruckPanelState extends State<TruckPanel> {
 				return _filterTagValues;
 			case FilterType.WorkTime:
 				return _filterWorkTimeValues;
+			case FilterType.FavTruck:
+				return _filterFavTruckValues;
 			default:
 				return null; 
 		}
@@ -307,7 +330,7 @@ class TruckPanelState extends State<TruckPanel> {
 }
 
 
-enum FilterType{Tag, WorkTime}
+enum FilterType{Tag, WorkTime, FavTruck}
 
 class Filter{
   FilterType type;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/truck_model.dart';
+import '../utils/Utils.dart';
 import 'dart:async';
 import 'package:location/location.dart' as lc;
 import 'package:flutter/services.dart';
@@ -112,7 +113,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
           position: LatLng(truck.location.lat, truck.location.lng),
           infoWindow: InfoWindow(
             title: truck.displayedName,
-            snippet: '${truck.schedule.toString()}',
+            snippet: '${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}',
             ),
           );
           markers.add(marker);

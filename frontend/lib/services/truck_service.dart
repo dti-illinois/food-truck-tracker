@@ -16,7 +16,7 @@ Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
    			    trucks.add(truck);
    		}
    	});
-      return trucks;
+    return trucks;
   } else {
     throw Exception('Failed to load trucks');
   }
@@ -59,7 +59,6 @@ Future<List<TruckModel>> searchTrucks({String searchInput}) async {
 }
 
 Future<bool> updateFoodTruck(TruckModel truck) async {
-  print( truck.toJson());
   final response = await http.put(host + '/vendor/' + truck.username,
        headers: {"Content-Type": "application/json"},
       body: json.encode(truck.toJson())

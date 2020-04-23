@@ -72,7 +72,8 @@ flutter:
      - images/icon-x-orange.png
      - images/close-blue.png
      - images/icon-x-orange-small.png
-
+     - images/group-5-blue.png
+     - images/icon-calendar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
