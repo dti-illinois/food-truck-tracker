@@ -144,7 +144,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
             // Add your onPressed code here!
             getCurrentLocation();
           },
-          child: Icon(Icons.navigation),
+          child: Icon(Icons.my_location),
           backgroundColor: Colors.blue,
         ),
       ),
