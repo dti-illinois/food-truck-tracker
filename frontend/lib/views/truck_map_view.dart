@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/truck_model.dart';
+import '../models/user_location.dart';
+import 'package:provider/provider.dart';
 import '../utils/Utils.dart';
 import 'dart:async';
 import 'package:location/location.dart' as lc;
@@ -58,13 +60,12 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
 
       Uint8List imageData = await getMarker();
       var location = await _locationTracker.getLocation();
-
+      //var location = Provider.of<UserLocation>(context);
       updateMarkerAndCircle(location, imageData);
 
       if (_locationSubscription != null) {
         _locationSubscription.cancel();
       }
-
 
       _locationSubscription = _locationTracker.onLocationChanged.listen((newLocalData) {
         if (mapController != null) {

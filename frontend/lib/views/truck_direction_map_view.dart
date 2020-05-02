@@ -4,33 +4,37 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/truck_model.dart';
 import '../utils/Utils.dart';
-import 'package:geolocator/geolocator.dart';
 import '../secret.dart';
+import 'package:location/location.dart' as lc;
 
 const double CAMERA_ZOOM = 13;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 
 class MapDirectionViewArguments {
-	Location curLocation;
+	//Location curLocation;
 	Location targetLocation;
-	MapDirectionViewArguments({this.curLocation, this.targetLocation});
+	MapDirectionViewArguments({this.targetLocation});
 }
 
 class MapDirectionView extends StatefulWidget {
 	static String id = "truck_direction";
 
-	Location curLocation;
+	//Location curLocation;
 	Location targetLocation;
-	MapDirectionView({this.curLocation, this.targetLocation});
+
+	//MapDirectionView({this.curLocation, this.targetLocation});
+  MapDirectionView({this.targetLocation});
 
 	@override
 	State<StatefulWidget> createState() => MapDirectionState();
 }
 
 class MapDirectionState extends State<MapDirectionView> {
-	Geolocator geolocator = Geolocator();
-	Position userLocation;
+
+  StreamSubscription _locationSubscription;
+  LocationData curLocation;
+  lc.Location _locationTracker;
 
 	Completer<GoogleMapController> _controller = Completer();
 	// this set will hold my markers
@@ -51,16 +55,51 @@ class MapDirectionState extends State<MapDirectionView> {
 	@override 
 	void initState() {
 		super.initState();
-		_getLocation().then((position) {
-			userLocation = position;
-		});
-		_setSourceAndDestinationIcons();
-		_sourceLocation = LatLng(userLocation.latitude, userLocation.longitude);
+		//initialize current location
+    _locationTracker = new lc.Location();
+    _locationTracker.onLocationChanged().listen((LocationData cLoc) {
+
+      _sourceLocation = LatLng(cLoc.latitude, cLoc.longitude);;
+      updatePinOnMap();
+    });
+
+    _setSourceAndDestinationIcons();
+		//_sourceLocation = LatLng(curLocation.latitude, curLocation.longitude);
+    curLocation = await _locationTracker.getLocation();
+    _sourceLocation = LatLng(curLocation.latitude, curLocation.longitude);
 		//_sourceLocation = LatLng(widget.curLocation.lat, widget.curLocation.lng);
 		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 	}
 
-	void _setSourceAndDestinationIcons() async {
+  void updatePinOnMap() async {
+    CameraPosition cPosition = CameraPosition(
+      zoom: CAMERA_ZOOM,
+      tilt: CAMERA_TILT,
+      bearing: CAMERA_BEARING,
+      target: LatLng(_sourceLocation.latitude,
+          _sourceLocation.longitude),
+    );
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(cPosition));
+    setState(() {
+      // updated position
+      var pinPosition = LatLng(_sourceLocation.latitude,
+          _sourceLocation.longitude);
+
+      // the trick is to remove the marker (by id)
+      // and add it again at the updated location
+      _markers.removeWhere(
+              (m) => m.markerId.value == 'sourcePin');
+      _markers.add(Marker(
+          markerId: MarkerId('sourcePin'),
+          position: pinPosition, // updated position
+          icon: sourceIcon
+      ));
+    });
+  }
+
+
+      void _setSourceAndDestinationIcons() async {
 		AssetUtils.getBytesFromAsset('images/current-location.png', 100)
 	      			.then((bytes) {
 	      					sourceIcon = BitmapDescriptor.fromBytes(bytes);
@@ -129,17 +168,6 @@ class MapDirectionState extends State<MapDirectionView> {
 		});
 	}
 
-	Future<Position> _getLocation() async {
-		var currentLocation;
-		try {
-			currentLocation = await geolocator.getCurrentPosition(
-					desiredAccuracy: LocationAccuracy.best);
-		} catch (e) {
-			currentLocation = null;
-		}
-		return currentLocation;
-	}
-
 	@override
 	Widget build(BuildContext context) {
 	   CameraPosition initialLocation = CameraPosition(
@@ -148,6 +176,7 @@ class MapDirectionState extends State<MapDirectionView> {
 	      tilt: CAMERA_TILT,
 	      target: _sourceLocation
 	   );
+
 	   return GoogleMap(
 	      myLocationEnabled: true,
 	      compassEnabled: true,

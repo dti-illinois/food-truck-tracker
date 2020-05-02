@@ -68,8 +68,9 @@ class _TruckDetailState extends State<TruckDetailView> {
 
    void _onLoacationDetailTapped() {
     Navigator.pushNamed(context, MapDirectionView.id, 
-      arguments: MapDirectionViewArguments(curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng), targetLocation: truck.location));
-  }
+      arguments: MapDirectionViewArguments(targetLocation: truck.location));
+    //curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng),
+   }
 
    Widget _truckTitle() {
     return Padding(
