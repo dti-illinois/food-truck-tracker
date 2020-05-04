@@ -39,12 +39,12 @@ def update_fav_trucks(username, truck_usernames):
 
 # The function takes in vendor as a json object 
 def add_vendor_info(vendor):
-	start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
-	now = datetime.now(timezone.utc).time()
-	if start <= now <= end:
-		vendor['is_open'] = True
-	else:
-		vendor['is_open'] = False
+	# start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
+	# now = datetime.now(timezone.utc).time()
+	# if start <= now <= end:
+	# 	vendor['is_open'] = True
+	# else:
+	# 	vendor['is_open'] = False
 	return vendor
 
 def post_vendor(vendor):
@@ -55,16 +55,19 @@ def post_vendor(vendor):
 		schedule = Schedule()
 		if 'schedule' in vendor:
 			schedule = create_schedule(vendor['schedule'])
-		print("schedule is done!")
+		weekly_schedule = []
+		if 'weekly_schedule' in vendor:
+			weekly_schedule = create_weekly_schedule(vendor['weekly_schedule'])
 		vendor_document = Vendor(
 			username = vendor['username'],
 			displayed_name = vendor['displayed_name'],
 			location = location,
 			schedule = schedule,
 			description = vendor.get('description', ''),
-			tags = vendor.get('tags', ''),
+			tags = vendor.get('tags', []),
+			weekly_schedule = weekly_schedule,
 		)
-		vendor_document = vendor_document.save()
+		vendor_document.save()
 		return get_vendor_by_username(vendor['username'])
 	except:
 		return "Error Occurred"
@@ -82,8 +85,10 @@ def update_vendor_by_username(username, update_vendor):
 			vendor.update(schedule = create_schedule(update_vendor['schedule']))
 		if 'description' in update_vendor:
 			vendor.update(description = update_vendor['description'])
-		vendor.save()
-		return add_vendor_info(objects_to_json(vendor))
+		if 'weekly_schedule' in update_vendor:
+			vendor.update(weekly_schedule = create_weekly_schedule(update_vendor['weekly_schedule']))
+		vendor = vendor.save()
+		return get_vendor_by_username(vendor['username'])
 	except Vendor.DoesNotExist:
 		return "contain invalid truck usernames"
 
@@ -93,3 +98,10 @@ def create_location(location):
 def create_schedule(schedule):
 	return Schedule(end=parse_string_to_datetime(schedule['end']), start=parse_string_to_datetime(schedule['start']))
 
+def create_weekly_schedule(weekly_schedule):
+	return list(map(lambda s: CalendarItem(
+			end=parse_string_to_datetime(s['end']), 
+			start=parse_string_to_datetime(s['start']),
+			week_day=s['week_day'],
+			location=create_location(s['location'])
+		), weekly_schedule))

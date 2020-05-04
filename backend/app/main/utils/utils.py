@@ -9,7 +9,7 @@ ISO_FORMAT = '%Y-%m-%dT%H:%M:%S.000'
 def format_query(args, query):
     query_parts = []
     # multiple truck ids
-    if args.get('username'):
+    if args.get('usernames'):
     	query_parts.append(prepare_condition('username', 'in', args.get('usernames')))
     # title text query
     if args.get('displayed_name'):
