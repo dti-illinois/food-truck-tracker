@@ -9,10 +9,11 @@ class TruckModel {
 	String description;
 	List<Tag> tags;
   bool isOpen;
+  WeeklySchedule weeklySchedule;
 
 	TruckModel({this.username, this.displayedName, this.location, 
     this.schedule, this.description='', this.tags=const [],
-    this.isOpen});
+    this.isOpen, this.weeklySchedule});
 
 	factory TruckModel.fromJson(Map<String, dynamic> json) {
 		return new TruckModel(
@@ -23,6 +24,7 @@ class TruckModel {
 				description: json['description'],
 				tags: TagHelper.tagsFromList(json['tags']),
         isOpen: json['is_open'],
+        weeklySchedule: WeeklySchedule.fromWeeklyScheduleItemsJson(json['weekly_schedule']),
 			);
 	}
 
@@ -146,5 +148,29 @@ class Schedule {
 
   Map<String, dynamic> toJson() {
     return {'start': start, 'end': end};
+  }
+}
+
+class WeeklySchedule {
+  List<WeeklyScheduleItem> scheduleItems;
+  WeeklySchedule({this.scheduleItems});
+  factory WeeklySchedule.fromWeeklyScheduleItemsJson(List<dynamic> items) {
+    return new WeeklySchedule(scheduleItems: items.map((item) => WeeklyScheduleItem.fromJson(item)).toList());
+  }
+}
+
+class WeeklyScheduleItem {
+  String start;
+  String end;
+  Location location;
+  String weekday; 
+  WeeklyScheduleItem({this.start, this.end, this.location, this.weekday});
+  factory WeeklyScheduleItem.fromJson(Map<String, dynamic> json) {
+    return new WeeklyScheduleItem(
+        start: json['start'].split(new RegExp(r"\.|\+"))[0], 
+        end: json['end'].split(new RegExp(r"\.|\+"))[0],
+        location: Location.fromJson(json['location']),
+        weekday: json['week_day'],
+      );
   }
 }
