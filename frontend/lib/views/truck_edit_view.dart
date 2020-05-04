@@ -10,7 +10,9 @@ import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_management_view.dart';
+import '../views/weekly_schedule_item_edit_view.dart';
 import '../widgets/header_bar.dart';
+import '../widgets/horizon_calendar.dart';
 
 class TruckEditView extends StatefulWidget {
   static String id = "truck_edit";
@@ -30,6 +32,9 @@ class _TruckEditState extends State<TruckEditView> {
   TimeOfDay startTime;
   TimeOfDay endTime;
   Location location; 
+  WeeklyScheduleItem newItem;
+  WeeklySchedule _weeklySchedule;
+
   List<Tag> tags; 
   bool _tagsListVisible = false;
 
@@ -54,6 +59,7 @@ class _TruckEditState extends State<TruckEditView> {
     _descriptionController = TextEditingController(text: truck.description);
     tags = List<Tag>.from(truck.tags);
     location = truck.location;
+    _weeklySchedule = truck.weeklySchedule;
   }
 
   Widget _truckTitle() {
@@ -145,6 +151,42 @@ class _TruckEditState extends State<TruckEditView> {
               ],
             ), // Row
         ); // Padding
+  }
+
+  void _addWeeklySchedule() {
+    Navigator.pushNamed(context, WeeklyScheduleItemEditView.id, 
+      arguments: WeeklyScheduleItemEditViewArguments(wkitem: newItem, 
+        onSave: () => _onUpdateWeeklyScheduleItem(newItem), onDelete: () => _onDeleteWeeklyScheduleItem(newItem)));
+  }
+
+  void _editWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+    Navigator.pushNamed(context, WeeklyScheduleItemEditView.id, 
+      arguments: WeeklyScheduleItemEditViewArguments(wkitem: wkitem, 
+        onSave: () => _onUpdateWeeklyScheduleItem(wkitem), onDelete: () => _onDeleteWeeklyScheduleItem(wkitem)));
+  }
+
+  void _onUpdateWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+
+  }
+  
+  void _onDeleteWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+
+  }
+
+  Widget _truckWeeklySchedule() {
+    return Column(
+      children: <Widget> [
+        GestureDetector(
+            onTap: _addWeeklySchedule,
+            child: Container(
+                margin: EdgeInsets.symmetric(vertical: 2),
+                padding: EdgeInsets.all(3),
+                child: Text("Add Schedule Item"),
+              ), // Container
+          ),
+        HorizonCalendar(schedule:_weeklySchedule,  onTap: _editWeeklyScheduleItem)
+        ]
+      ); // Column
   }
 
   Future<TimeOfDay> _pickTime(TimeOfDay initialTime) async {
@@ -399,6 +441,7 @@ void _onTagListItemTap(Tag tag) {
                                               children: <Widget>[
                                                 _truckTitle(),
                                                 _truckDetails(),
+                                                _truckWeeklySchedule(),
                                                 _truckDescription(),
                                               ]
                                           )),

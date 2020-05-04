@@ -151,6 +151,63 @@ class Schedule {
   }
 }
 
+enum WeekDay { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+
+class WeekDayHelper {
+  static String weekdayToString(WeekDay day) {
+    switch(day) {
+      case WeekDay.Monday: return 'Savory';
+      case WeekDay.Tuesday: return 'Sweet';
+      case WeekDay.Wednesday: return 'Wednesday';
+      case WeekDay.Thursday: return 'Thursday';
+      case WeekDay.Friday: return 'Friday';
+      case WeekDay.Saturday: return 'Saturday';
+      case WeekDay.Sunday: return 'Sunday';
+      default:         return '';
+    }
+  }
+
+  static WeekDay weekdayFromString(String weekdayString) {
+    if (weekdayString != null) {
+      if (weekdayString == 'Monday') {
+        return WeekDay.Monday;
+      }
+      else if (weekdayString == 'Tuesday') {
+        return WeekDay.Tuesday;
+      }
+      else if (weekdayString == 'Wednesday') {
+        return WeekDay.Wednesday;
+      }
+      else if (weekdayString == 'Thursday') {
+        return WeekDay.Thursday;
+      }
+      else if (weekdayString == 'Friday') {
+        return WeekDay.Friday;
+      }
+       else if (weekdayString == 'Saturday') {
+        return WeekDay.Saturday;
+      }
+      else if (weekdayString == 'Sunday') {
+        return WeekDay.Sunday;
+      }
+    }
+    return null;
+  }
+
+  static List<dynamic> weekdayToList(List<WeekDay> weekdays) {
+    if (weekdays == null) {
+      return null;
+    }
+    else {
+      List<String> weekdaysList = new List<String>();
+      for (WeekDay day in weekdays) {
+        weekdaysList.add(WeekDayHelper.weekdayToString(day));
+      }
+      return weekdaysList;
+    }
+  }
+}
+
 class WeeklySchedule {
   List<WeeklyScheduleItem> scheduleItems;
   WeeklySchedule({this.scheduleItems});
