@@ -73,7 +73,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
               bearing: 192.8334901395799,
               target: LatLng(newLocalData.latitude, newLocalData.longitude),
               tilt: 0,
-              zoom: 16.00)));
+              zoom: 14.00)));
           updateMarkerAndCircle(newLocalData, imageData);
         }
       });
@@ -138,7 +138,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
 
           scrollGesturesEnabled: true, 
           zoomGesturesEnabled: true,
-          myLocationEnabled: true,
+          //myLocationEnabled: true,
         ), // GoogleMap
         floatingActionButton: FloatingActionButton(
           onPressed: () {

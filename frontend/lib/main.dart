@@ -48,7 +48,8 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 MapDirectionViewArguments args = settings.arguments;
-                return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
+                //return MapDirectionView(curLocation: args.curLocation, targetLocation: args.targetLocation);
+                return MapDirectionView(targetLocation: args.targetLocation);
               },
             );
           } else if (settings.name == TruckEditView.id) {

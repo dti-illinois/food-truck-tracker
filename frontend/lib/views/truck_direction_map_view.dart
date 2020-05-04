@@ -6,6 +6,8 @@ import '../models/truck_model.dart';
 import '../utils/Utils.dart';
 import '../secret.dart';
 import 'package:location/location.dart' as lc;
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 
 const double CAMERA_ZOOM = 13;
 const double CAMERA_TILT = 0;
@@ -33,7 +35,7 @@ class MapDirectionView extends StatefulWidget {
 class MapDirectionState extends State<MapDirectionView> {
 
   StreamSubscription _locationSubscription;
-  LocationData curLocation;
+  lc.LocationData currentLocation;
   lc.Location _locationTracker;
 
 	Completer<GoogleMapController> _controller = Completer();
@@ -51,40 +53,49 @@ class MapDirectionState extends State<MapDirectionView> {
 	LatLng _sourceLocation;
 	LatLng _destLocation;
 
-
 	@override 
 	void initState() {
 		super.initState();
 		//initialize current location
-    _locationTracker = new lc.Location();
-    _locationTracker.onLocationChanged().listen((LocationData cLoc) {
+		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
+		_locationTracker = new lc.Location();
 
-      _sourceLocation = LatLng(cLoc.latitude, cLoc.longitude);;
-      updatePinOnMap();
-    });
+
+		_locationTracker.onLocationChanged.listen((lc.LocationData cLoc) {
+			currentLocation = cLoc;
+			updatePinOnMap();
+		});
 
     _setSourceAndDestinationIcons();
 		//_sourceLocation = LatLng(curLocation.latitude, curLocation.longitude);
-    curLocation = await _locationTracker.getLocation();
-    _sourceLocation = LatLng(curLocation.latitude, curLocation.longitude);
+		setInitialLocation();
+    //_sourceLocation = LatLng(curLocation.latitude, curLocation.longitude);
 		//_sourceLocation = LatLng(widget.curLocation.lat, widget.curLocation.lng);
-		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
+
 	}
+
+	void setInitialLocation() async {
+		// set the initial location by pulling the user's
+		// current location from the location's getLocation()
+		currentLocation = await _locationTracker.getLocation();
+	}
+
+
 
   void updatePinOnMap() async {
     CameraPosition cPosition = CameraPosition(
       zoom: CAMERA_ZOOM,
       tilt: CAMERA_TILT,
       bearing: CAMERA_BEARING,
-      target: LatLng(_sourceLocation.latitude,
-          _sourceLocation.longitude),
+      target: LatLng(currentLocation.latitude,
+					currentLocation.longitude),
     );
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(cPosition));
     setState(() {
       // updated position
-      var pinPosition = LatLng(_sourceLocation.latitude,
-          _sourceLocation.longitude);
+      var pinPosition = LatLng(currentLocation.latitude,
+					currentLocation.longitude);
 
       // the trick is to remove the marker (by id)
       // and add it again at the updated location
@@ -99,8 +110,8 @@ class MapDirectionState extends State<MapDirectionView> {
   }
 
 
-      void _setSourceAndDestinationIcons() async {
-		AssetUtils.getBytesFromAsset('images/current-location.png', 100)
+  void _setSourceAndDestinationIcons() async {
+		AssetUtils.getBytesFromAsset('images/current-location.png', 50)
 	      			.then((bytes) {
 	      					sourceIcon = BitmapDescriptor.fromBytes(bytes);
 	      				});
@@ -110,35 +121,39 @@ class MapDirectionState extends State<MapDirectionView> {
 						});
 	}
 
-	void onMapCreated(GoogleMapController controller) {
+	void _onMapCreated(GoogleMapController controller) {
 	   _controller.complete(controller);
 	   setMapPins();
-	   setPolylines();
+	   //setPolylines();
 	}
 
 	void setMapPins() {
-		setState(() {
 		      // source pin
+		var pinPosition = LatLng(currentLocation.latitude,
+				currentLocation.longitude);
+		//_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
+
 			_markers.add(Marker(
 				markerId: MarkerId('sourcePin'),
-				position: _sourceLocation,
+				position: pinPosition,
 				icon: sourceIcon
 			));
 			// destination pin
 			_markers.add(Marker(
 				markerId: MarkerId('destPin'),
-				position: _destLocation,
+				position: _destLocation ,
 				icon: destinationIcon
 			));
-		});
+		setPolylines();
 	}
 
 	setPolylines() async {
+		//_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 		await
 		  polylinePoints?.getRouteBetweenCoordinates(
 					GOOGLE_MAP_API_KEY,
-		     _sourceLocation.latitude,
-		     _sourceLocation.longitude,
+					currentLocation.latitude,
+					currentLocation.longitude,
 		     _destLocation.latitude,
 		     _destLocation.longitude)
 		  .then((result) {
@@ -170,22 +185,37 @@ class MapDirectionState extends State<MapDirectionView> {
 
 	@override
 	Widget build(BuildContext context) {
+		LatLng gcenter = LatLng(widget.targetLocation.lat, widget.targetLocation.lng);
+		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 	   CameraPosition initialLocation = CameraPosition(
 	      zoom: CAMERA_ZOOM,
 	      bearing: CAMERA_BEARING,
 	      tilt: CAMERA_TILT,
-	      target: _sourceLocation
+	      target: gcenter
 	   );
-
+		if (currentLocation != null) {
+			initialLocation = CameraPosition(
+					target: LatLng(currentLocation.latitude,
+							currentLocation.longitude),
+					zoom: CAMERA_ZOOM,
+					tilt: CAMERA_TILT,
+					bearing: CAMERA_BEARING
+			);
+		}
 	   return GoogleMap(
-	      myLocationEnabled: true,
+	      //myLocationEnabled: true,
 	      compassEnabled: true,
 	      tiltGesturesEnabled: false,
 	      markers: _markers,
 	      polylines: _polylines,
 	      mapType: MapType.normal,
 	      initialCameraPosition: initialLocation,
-	      onMapCreated: onMapCreated
+	      onMapCreated: (GoogleMapController controller) {
+					_controller.complete(controller);
+					// my map has completed being created;
+					// i'm ready to show the pins on the map
+					setMapPins();
+				}
 	   );
 	}
 }
