@@ -10,11 +10,13 @@ import '../models/truck_model.dart';
 typedef LocationPickedCallback = void Function(Location);
 
 class LocationEditableDisplay extends StatelessWidget {
+  
   final Location location;
   final LocationPickedCallback onTap;
   final bool locationEditable; 
-
-  LocationEditableDisplay({this.location, this.onTap, this.locationEditable});
+  final bool locationNameEditable;
+  final TextEditingController controller;
+  LocationEditableDisplay({this.location, this.onTap, this.locationEditable, this.locationNameEditable=false, this.controller});
 
   void _onTapEditLocation(BuildContext context) async {
     await Navigator.push(
@@ -26,6 +28,7 @@ class LocationEditableDisplay extends StatelessWidget {
             useCurrentLocation: false,
             onPlacePicked: (result) {
               Location location = new Location(lng: result.geometry.location.lng, lat: result.geometry.location.lat, location_name: result.formattedAddress );
+              controller.text = result.formattedAddress;
               Navigator.of(context).pop();
               onTap(location);
             },
@@ -34,9 +37,22 @@ class LocationEditableDisplay extends StatelessWidget {
       );
   }
 
+  Widget _locationName() {
+    return locationNameEditable ? 
+            TextField(controller: controller,
+                      style: TextStyle(
+                          fontFamily: 'ProximaNovaMedium',
+                          fontSize: 16,
+                          color: UiColors.bodyText)) : 
+            Text(location.location_name??"(${location.lat.toStringAsFixed(1)}, ${location.lng.toStringAsFixed(1)})",
+                      style: TextStyle(
+                          fontFamily: 'ProximaNovaMedium',
+                          fontSize: 16,
+                          color: UiColors.bodyText));
+  }
+
   @override
   Widget build(BuildContext context) {
-      String locationText =  !location.location_name.isEmpty ? location.location_name : "(${location.lat.toStringAsFixed(1)}, ${location.lng.toStringAsFixed(1)})";
       return Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
               child: Row(
@@ -49,11 +65,7 @@ class LocationEditableDisplay extends StatelessWidget {
                       ),
                       height: 20,
                     ),
-                  Expanded(child: Text(locationText,
-                      style: TextStyle(
-                          fontFamily: 'ProximaNovaMedium',
-                          fontSize: 16,
-                          color: UiColors.bodyText))),
+                  Expanded(child:_locationName()),
                   Visibility(visible: locationEditable,
                     child: GestureDetector(
                       child: Container(

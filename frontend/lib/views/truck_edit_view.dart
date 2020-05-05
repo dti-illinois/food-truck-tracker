@@ -29,6 +29,7 @@ class _TruckEditState extends State<TruckEditView> {
   TruckModel truck;
   TextEditingController _titleController;
   TextEditingController _descriptionController;
+  TextEditingController _locationNameController;
   ScrollController _scrollController = ScrollController();
   TimeOfDay startTime;
   TimeOfDay endTime;
@@ -50,6 +51,7 @@ class _TruckEditState extends State<TruckEditView> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _locationNameController.dispose();
     super.dispose();
   }
 
@@ -58,9 +60,15 @@ class _TruckEditState extends State<TruckEditView> {
     endTime = truck.schedule.end;
     _titleController = TextEditingController(text: truck.displayedName);
     _descriptionController = TextEditingController(text: truck.description);
+    _locationNameController = TextEditingController(text: truck.location.toString());
+    _locationNameController.addListener(_locationNameControllerCallback);
     tags = List<Tag>.from(truck.tags);
     location = truck.location;
     _weeklySchedule = truck.weeklySchedule;
+  }
+
+  void _locationNameControllerCallback() {
+    location.location_name = _locationNameController.text;
   }
 
   Widget _truckTitle() {
@@ -121,7 +129,7 @@ class _TruckEditState extends State<TruckEditView> {
   }
 
   Widget _truckLocationDetail() {
-  	return location == null ? null : LocationEditableDisplay(location: location, onTap: _onTapEditLocation, locationEditable: true);
+  	return location == null ? null : LocationEditableDisplay(location: location, onTap: _onTapEditLocation, locationEditable: true, locationNameEditable: true, controller: _locationNameController);
   }
 
   void _addWeeklySchedule() {

@@ -36,14 +36,22 @@ class _WeeklyScheduleItemEditState extends State<WeeklyScheduleItemEditView> {
 	TimeOfDay _startTime;
 	TimeOfDay _endTime;
 	Location _location;
+  	TextEditingController _locationNameController;
 
 	@override
 	void initState() {
-		print(widget.wkitem.start);
 		_selectedDay = widget.wkitem.weekday;
 		_startTime = widget.wkitem.start;
 		_endTime = widget.wkitem.end;
 		_location = widget.wkitem.location;
+  		_locationNameController = TextEditingController(text:widget.wkitem.location.toString());
+  		_locationNameController.addListener(() {_location.location_name = _locationNameController.text;});
+	}
+
+	@override
+	void dispose(){
+		_locationNameController.dispose();
+    	super.dispose();
 	}
 
 	List<Widget> _weekdayDropdownItems() {
@@ -112,7 +120,7 @@ class _WeeklyScheduleItemEditState extends State<WeeklyScheduleItemEditView> {
 	}
 
 	Widget _locationSelection() {
-		return LocationEditableDisplay(location: _location, onTap: _onTapEditLocation, locationEditable: true);
+		return LocationEditableDisplay(location: _location, onTap: _onTapEditLocation, locationEditable: true, locationNameEditable: true, controller: _locationNameController);
 	}
 
 	Widget _timeSelection() {

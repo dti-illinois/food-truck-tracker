@@ -129,6 +129,9 @@ class Location {
   Map<String, dynamic> toJson() {
     return {'lat': lat, 'lng': lng, 'location_name': location_name};
   }
+  String toString() {
+    return location_name??"(${lat.toStringAsFixed(1)}, ${lng.toStringAsFixed(1)})";
+  }
 }
 
 class Schedule {
