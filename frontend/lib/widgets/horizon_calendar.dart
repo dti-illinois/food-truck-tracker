@@ -14,8 +14,8 @@ class HorizonCalendar extends StatelessWidget {
 	static const EdgeInsets _iconPadding = EdgeInsets.only(right: 8);
 
 
-	Widget _buildTimeWidget(String start, String end) {
-		String timeText = "${TimeUtils.formatTimestamp(start)} - ${TimeUtils.formatTimestamp(end)}";
+	Widget _buildTimeWidget(TimeOfDay start, TimeOfDay end) {
+		String timeText = "${TimeUtils.formatTimeOfDay(start)} - ${TimeUtils.formatTimeOfDay(end)}";
 		return Container(
 		      child: Row(
 		        children: <Widget>[

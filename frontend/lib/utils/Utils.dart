@@ -123,4 +123,21 @@ class TimeUtils{
     final format = DateFormat.jm();  //"6:00 AM"
     return format.format(dt);
   }
+  static TimeOfDay timeOfDayFromTimestamp(String timestamp) {
+    return TimeOfDay.fromDateTime(DateTime.parse(timestamp));
+  }
+  static String timestampFromTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    return dt.toIso8601String();
+  }
+  static int compareTOD(TimeOfDay a, TimeOfDay b) {
+    if (a==b) {
+      return 0;
+    }
+    if (a.hour < b.hour || (a.hour == b.hour && a.minute < b.minute)) {
+      return -1;
+    }
+    return 1;
+  }
 }

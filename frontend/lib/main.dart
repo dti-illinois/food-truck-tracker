@@ -62,7 +62,7 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 WeeklyScheduleItemEditViewArguments args = settings.arguments;
-                return WeeklyScheduleItemEditView(wkitem: args.wkitem);
+                return WeeklyScheduleItemEditView(wkitem: args.wkitem, onDelete: args.onDelete, onSave: args.onSave, isNewItem: args.isNewItem);
               },
             );
           }

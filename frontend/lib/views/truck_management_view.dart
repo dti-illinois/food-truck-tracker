@@ -134,7 +134,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   }
 
   Widget _truckScheduleDetail() {
-  	String displayTime = "${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}";
+  	String displayTime = "${TimeUtils.formatTimeOfDay(truck.schedule.start)} - ${TimeUtils.formatTimeOfDay(truck.schedule.end)}";
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(

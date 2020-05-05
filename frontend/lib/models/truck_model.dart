@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import '../utils/Utils.dart';
 
 class TruckModel {
 	String displayedName;
@@ -36,6 +37,7 @@ class TruckModel {
       'schedule': schedule.toJson(),
       'description': description,
       'tags': TagHelper.tagsToList(tags),
+      'weekly_schedule': weeklySchedule.toJson(),
     };
     return map;
   }
@@ -112,6 +114,11 @@ class Location {
 	double lng;
   String location_name; 
 	Location({this.lat, this.lng, this.location_name});
+  Location.emptyLocation() {
+    this.lat = 0;
+    this.lng = 0;
+    this.location_name = "None";
+  }
 	factory Location.fromJson(Map<String, dynamic> json) {
 		return new Location(lat: json['lat'],
 							 lng: json['lng'],
@@ -125,16 +132,16 @@ class Location {
 }
 
 class Schedule {
-	String start;
-	String end;
+	TimeOfDay start;
+	TimeOfDay end;
 	Schedule({this.start,this.end});
   Schedule.fromTimeOfDay(TimeOfDay todStart, TimeOfDay todEnd) {
-    start = _formatTimeOfDay(todStart);
-    end = _formatTimeOfDay(todEnd);
+    start = todStart;
+    end = todEnd;
   }
 	factory Schedule.fromJson(Map<String, dynamic> json) {
-		return new Schedule(start: json['start'].split(new RegExp(r"\.|\+"))[0], 
-			end: json['end'].split(new RegExp(r"\.|\+"))[0]);
+		return new Schedule(start: TimeUtils.timeOfDayFromTimestamp(json['start'].split(new RegExp(r"\.|\+"))[0]), 
+			end: TimeUtils.timeOfDayFromTimestamp(json['end'].split(new RegExp(r"\.|\+"))[0]));
 	}
 	String toString() {
 		return '${this.start} - ${this.end}';
@@ -147,7 +154,7 @@ class Schedule {
   }
 
   Map<String, dynamic> toJson() {
-    return {'start': start, 'end': end};
+    return {'start': TimeUtils.timestampFromTimeOfDay(start), 'end': TimeUtils.timestampFromTimeOfDay(end)};
   }
 }
 
@@ -156,8 +163,8 @@ enum WeekDay { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 class WeekDayHelper {
   static String weekdayToString(WeekDay day) {
     switch(day) {
-      case WeekDay.Monday: return 'Savory';
-      case WeekDay.Tuesday: return 'Sweet';
+      case WeekDay.Monday: return 'Monday';
+      case WeekDay.Tuesday: return 'Tuesday';
       case WeekDay.Wednesday: return 'Wednesday';
       case WeekDay.Thursday: return 'Thursday';
       case WeekDay.Friday: return 'Friday';
@@ -214,20 +221,50 @@ class WeeklySchedule {
   factory WeeklySchedule.fromWeeklyScheduleItemsJson(List<dynamic> items) {
     return new WeeklySchedule(scheduleItems: items.map((item) => WeeklyScheduleItem.fromJson(item)).toList());
   }
+  void reorderItem() {
+    scheduleItems.sort((a, b) {
+      int aidx = WeekDayHelper.weekdayFromString(a.weekday).index;
+      int bidx = WeekDayHelper.weekdayFromString(b.weekday).index;
+      if (aidx < bidx) return -1;
+      if (aidx > bidx) return 1;
+      if(TimeUtils.compareTOD(a.start, b.start) < 0) {
+        return -1;
+      } else if (TimeUtils.compareTOD(a.start, b.start) > 0) {
+        return 1;
+      }
+      if(TimeUtils.compareTOD(a.end, b.end) < 0) {
+        return -1;
+      } else if (TimeUtils.compareTOD(a.end, b.end) > 0) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  List<dynamic> toJson() {
+    return scheduleItems.map((item) => item.toJson()).toList();
+  }
 }
 
 class WeeklyScheduleItem {
-  String start;
-  String end;
+  TimeOfDay start;
+  TimeOfDay end;
   Location location;
   String weekday; 
   WeeklyScheduleItem({this.start, this.end, this.location, this.weekday});
   factory WeeklyScheduleItem.fromJson(Map<String, dynamic> json) {
     return new WeeklyScheduleItem(
-        start: json['start'].split(new RegExp(r"\.|\+"))[0], 
-        end: json['end'].split(new RegExp(r"\.|\+"))[0],
+        start: TimeUtils.timeOfDayFromTimestamp(json['start'].split(new RegExp(r"\.|\+"))[0]), 
+        end: TimeUtils.timeOfDayFromTimestamp(json['end'].split(new RegExp(r"\.|\+"))[0]),
         location: Location.fromJson(json['location']),
         weekday: json['week_day'],
       );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'start': TimeUtils.timestampFromTimeOfDay(start),
+      'end': TimeUtils.timestampFromTimeOfDay(end),
+      'location': location.toJson(),
+      'week_day': weekday,
+    };
   }
 }
