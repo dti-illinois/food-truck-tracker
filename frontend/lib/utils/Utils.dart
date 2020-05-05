@@ -84,6 +84,9 @@ class LocationUtils {
   static final int defaultLocationRadiusInMeters = 1000;
 
   static double distance(double lat1, double lon1, double lat2, double lon2) {
+    if (lat1 == null || lon1 == null || lat2 == null || lon2 == null ) {
+      return -1;
+    }
     double theta = lon1 - lon2;
     double dist = sin(deg2rad(lat1)) 
                     * sin(deg2rad(lat2))

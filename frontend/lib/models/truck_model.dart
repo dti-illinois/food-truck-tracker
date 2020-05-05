@@ -24,7 +24,7 @@ class TruckModel {
 				schedule: Schedule.fromJson(json['schedule']),
 				description: json['description'],
 				tags: TagHelper.tagsFromList(json['tags']),
-        isOpen: json['is_open'],
+        isOpen: json['is_open'] ??  false,
         weeklySchedule: WeeklySchedule.fromWeeklyScheduleItemsJson(json['weekly_schedule']),
 			);
 	}
@@ -143,6 +143,9 @@ class Schedule {
     end = todEnd;
   }
 	factory Schedule.fromJson(Map<String, dynamic> json) {
+    if (json['start'] == null || json['end'] == null) {
+      return new Schedule();
+    }
 		return new Schedule(start: TimeUtils.timeOfDayFromTimestamp(json['start'].split(new RegExp(r"\.|\+"))[0]), 
 			end: TimeUtils.timeOfDayFromTimestamp(json['end'].split(new RegExp(r"\.|\+"))[0]));
 	}
@@ -222,6 +225,9 @@ class WeeklySchedule {
   List<WeeklyScheduleItem> scheduleItems;
   WeeklySchedule({this.scheduleItems});
   factory WeeklySchedule.fromWeeklyScheduleItemsJson(List<dynamic> items) {
+    if (items == null) {
+      return new WeeklySchedule(scheduleItems: []);
+    }
     return new WeeklySchedule(scheduleItems: items.map((item) => WeeklyScheduleItem.fromJson(item)).toList());
   }
   void reorderItem() {
