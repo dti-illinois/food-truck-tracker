@@ -108,9 +108,8 @@ class MapDirectionState extends State<MapDirectionView> {
           position: pinPosition, // updated position
           icon: sourceIcon
       ));
-      // setPolylines(); 
     });
-    
+		//setPolylines();
   }
 
 
@@ -128,7 +127,6 @@ class MapDirectionState extends State<MapDirectionView> {
 	void _onMapCreated(GoogleMapController controller) {
 	   _controller.complete(controller);
 	   setMapPins();
-	   //setPolylines();
 	}
 
 	void setMapPins() {
@@ -137,7 +135,6 @@ class MapDirectionState extends State<MapDirectionView> {
 		// source pin
 		var pinPosition = LatLng(_currentLocation.latitude,
 				_currentLocation.longitude);
-		//_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 
 			_markers.add(Marker(
 				markerId: MarkerId('sourcePin'),
@@ -195,20 +192,20 @@ class MapDirectionState extends State<MapDirectionView> {
 	Widget build(BuildContext context) {
 		if (!_isLocationLoaded) {
 			return Container(
-		    child: Align(
-		      alignment: Alignment.center,
-		      child: CircularProgressIndicator(),
-		    ),
-		  );
+				child: Align(
+					alignment: Alignment.center,
+					child: CircularProgressIndicator(),
+				),
+			);
 		}
-		LatLng gcenter = LatLng(widget.targetLocation.lat, widget.targetLocation.lng);
-		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
-	   CameraPosition initialLocation = CameraPosition(
-	      zoom: CAMERA_ZOOM,
-	      bearing: CAMERA_BEARING,
-	      tilt: CAMERA_TILT,
-	      target: gcenter
-	   );
+		LatLng gcenter = LatLng(
+				widget.targetLocation.lat, widget.targetLocation.lng);
+		CameraPosition initialLocation = CameraPosition(
+				zoom: CAMERA_ZOOM,
+				bearing: CAMERA_BEARING,
+				tilt: CAMERA_TILT,
+				target: gcenter
+		);
 		if (_currentLocation != null) {
 			initialLocation = CameraPosition(
 					target: LatLng(_currentLocation.latitude,
@@ -218,18 +215,29 @@ class MapDirectionState extends State<MapDirectionView> {
 					bearing: CAMERA_BEARING
 			);
 		}
-	   return GoogleMap(
-	      //myLocationEnabled: true,
-	      compassEnabled: true,
-	      tiltGesturesEnabled: false,
-	      markers: _markers,
-	      polylines: _polylines,
-	      mapType: MapType.normal,
-	      initialCameraPosition: initialLocation,
-	      onMapCreated: (GoogleMapController controller) {
-					_controller.complete(controller);
-					setMapPins();
-				}
-	   );
+		return MaterialApp(
+			home: Scaffold(
+				body: GoogleMap(
+						compassEnabled: true,
+						tiltGesturesEnabled: false,
+						markers: _markers,
+						polylines: _polylines,
+						mapType: MapType.normal,
+						initialCameraPosition: initialLocation,
+						onMapCreated: (GoogleMapController controller) {
+							_controller.complete(controller);
+							setMapPins();
+						}
+				), // GoogleMap
+				floatingActionButton: FloatingActionButton(
+					onPressed: () {
+						// Add your onPressed code here!
+						setPolylines();
+					},
+					child: Icon(Icons.navigation),
+					backgroundColor: Colors.blue,
+				),
+			),
+		);
 	}
 }

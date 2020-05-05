@@ -97,8 +97,8 @@ class _TruckDetailState extends State<TruckDetailView> {
                     button: true,
                     child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
                         child: IconButton(
-     icon: _isFavorite? Icon(Icons.favorite):Icon(Icons.favorite_border),
-     color: Colors.pink,
+     icon: _isFavorite? Icon(Icons.star):Icon(Icons.star_border),
+     color: UiColors.darkBlueGrey,
      onPressed: _toggleFavTruck,
      )))
             ),),

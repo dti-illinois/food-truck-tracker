@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import "package:http/http.dart" as http;
 
-var host = 'http://0.0.0.0:5000';
+var host = 'http://10.0.2.2:5000';
 var USER_URL = host + "/user"; 
 
 
