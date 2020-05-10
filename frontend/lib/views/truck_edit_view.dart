@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../config.dart';
@@ -10,7 +9,11 @@ import '../services/truck_service.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_management_view.dart';
+import '../views/weekly_schedule_item_edit_view.dart';
 import '../widgets/header_bar.dart';
+import '../widgets/horizon_calendar.dart';
+import '../widgets/location_editable_display.dart';
+import '../widgets/timestamp_editable_display.dart';
 
 class TruckEditView extends StatefulWidget {
   static String id = "truck_edit";
@@ -26,10 +29,14 @@ class _TruckEditState extends State<TruckEditView> {
   TruckModel truck;
   TextEditingController _titleController;
   TextEditingController _descriptionController;
+  TextEditingController _locationNameController;
   ScrollController _scrollController = ScrollController();
   TimeOfDay startTime;
   TimeOfDay endTime;
   Location location; 
+  WeeklyScheduleItem _newItem;
+  WeeklySchedule _weeklySchedule;
+
   List<Tag> tags; 
   bool _tagsListVisible = false;
 
@@ -44,16 +51,24 @@ class _TruckEditState extends State<TruckEditView> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _locationNameController.dispose();
     super.dispose();
   }
 
   void _initElements() {
-    startTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.start));
-    endTime = TimeOfDay.fromDateTime(DateTime.parse(truck.schedule.end));
+    startTime = truck.schedule.start;
+    endTime = truck.schedule.end;
     _titleController = TextEditingController(text: truck.displayedName);
     _descriptionController = TextEditingController(text: truck.description);
+    _locationNameController = TextEditingController(text: truck.location.toString());
+    _locationNameController.addListener(_locationNameControllerCallback);
     tags = List<Tag>.from(truck.tags);
     location = truck.location;
+    _weeklySchedule = truck.weeklySchedule;
+  }
+
+  void _locationNameControllerCallback() {
+    location.location_name = _locationNameController.text;
   }
 
   Widget _truckTitle() {
@@ -114,37 +129,55 @@ class _TruckEditState extends State<TruckEditView> {
   }
 
   Widget _truckLocationDetail() {
-  	String locationText =  !location.location_name.isEmpty ? location.location_name : "(${location.lat.toStringAsFixed(1)}, ${location.lng.toStringAsFixed(1)})";
-  	return Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child:Image.asset('images/icon-location.png'),
-                    ),
-                    height: 20,
-                  ),
-                Expanded(child: Text(locationText,
-                    style: TextStyle(
-                        fontFamily: 'ProximaNovaMedium',
-                        fontSize: 16,
-                        color: UiColors.bodyText))),
-                GestureDetector(
-                  child: Container(
-                        padding: const EdgeInsets.all(2.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: UiColors.darkSlateBlueTwoTransparent03)
-                        ),
-                        child: Text("Edit Location"),
-                      ),
-                  onTap: _onTapEditLocation,
-                ),
-              ],
-            ), // Row
-        ); // Padding
+  	return location == null ? null : LocationEditableDisplay(location: location, onTap: _onTapEditLocation, locationEditable: true, locationNameEditable: true, controller: _locationNameController);
+  }
+
+  void _addWeeklySchedule() {
+    _newItem = WeeklyScheduleItem(start: TimeOfDay.now(), 
+                      end: TimeOfDay.now(),
+                      location: Location.emptyLocation(), weekday:"Monday");
+    Navigator.pushNamed(context, WeeklyScheduleItemEditView.id, 
+      arguments: WeeklyScheduleItemEditViewArguments(wkitem: _newItem, 
+        onSave: () => _onAddWeeklyScheduleItem(_newItem), 
+        onDelete: () => _onDeleteWeeklyScheduleItem(_newItem),
+        isNewItem: true));
+  }
+
+  void _editWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+    Navigator.pushNamed(context, WeeklyScheduleItemEditView.id, 
+      arguments: WeeklyScheduleItemEditViewArguments(wkitem: wkitem, 
+        onSave: () => _onUpdateWeeklyScheduleItem(wkitem), 
+        onDelete: () => _onDeleteWeeklyScheduleItem(wkitem), 
+        isNewItem: false));
+  }
+
+  void _onUpdateWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+    _weeklySchedule.reorderItem();
+  }
+  
+  void _onDeleteWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+
+  }
+
+  void _onAddWeeklyScheduleItem(WeeklyScheduleItem wkitem) {
+    _weeklySchedule.scheduleItems.add(_newItem);
+    _weeklySchedule.reorderItem();
+  }
+
+  Widget _truckWeeklySchedule() {
+    return Column(
+      children: <Widget> [
+        GestureDetector(
+            onTap: _addWeeklySchedule,
+            child: Container(
+                margin: EdgeInsets.symmetric(vertical: 2),
+                padding: EdgeInsets.all(3),
+                child: Text("Add Schedule Item"),
+              ), // Container
+          ),
+        HorizonCalendar(schedule:_weeklySchedule,  onTap: _editWeeklyScheduleItem)
+        ]
+      ); // Column
   }
 
   Future<TimeOfDay> _pickTime(TimeOfDay initialTime) async {
@@ -153,36 +186,17 @@ class _TruckEditState extends State<TruckEditView> {
     return time;
   }
 
-  void _onTapEditLocation() async {
-    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlacePicker(
-                            apiKey: GOOGLE_MAP_API_KEY,   // Put YOUR OWN KEY here.
-                            initialPosition: LatLng(LOCATION_LAT, LOCATION_LNG),
-                            useCurrentLocation: false,
-                            onPlacePicked: (result) {
-                              location = new Location(lng: result.geometry.location.lng, lat: result.geometry.location.lat, location_name: result.formattedAddress );
-                              Navigator.of(context).pop();
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      );
-
+  void _onTapEditLocation(Location newLocation) {
+    this.setState(() {location = newLocation;});
   }
 
-  void _onTapStartTime() async {
-    TimeOfDay time =
-        await _pickTime(startTime ?? (new TimeOfDay.now()));
-    if (time != null) startTime = time;
+  void _onTapStartTime(TimeOfDay newTime) {
+    if (newTime != null) startTime = newTime;
     setState(() {});
   }
 
-void _onTapEndTime() async {
-    TimeOfDay time =
-        await _pickTime(endTime ?? (new TimeOfDay.now()));
-    if (time != null) endTime = time;
+void _onTapEndTime(TimeOfDay newTime) {
+    if (newTime != null) endTime = newTime;
     setState(() {});
   }
 
@@ -253,12 +267,12 @@ void _onTagListItemTap(Tag tag) {
 	                      Padding(
 	                        padding: EdgeInsets.only(right: 10),
 	                        child:Image.asset('images/icon-time.png'),),
-	                      _ScheduleDisplayView(
-                          label: TimeUtils.formatTimeOfDay(startTime),
+	                      TimestampEditableDisplay(
+                          time: startTime,
                           onTap: _onTapStartTime,
                         ), 
-                        _ScheduleDisplayView(
-                          label: TimeUtils.formatTimeOfDay(endTime),
+                        TimestampEditableDisplay(
+                          time: endTime,
                           onTap: _onTapEndTime,
                         ), 
 	                    ],
@@ -362,6 +376,7 @@ void _onTagListItemTap(Tag tag) {
     truck.schedule = Schedule.fromTimeOfDay(startTime, endTime);
     truck.tags = List<Tag>.from(tags);
     truck.location = location;
+    truck.weeklySchedule = _weeklySchedule;
     updateFoodTruck(truck).then((bool isSuccess) {
       if(isSuccess) {
         Navigator.of(context).pop();
@@ -399,6 +414,7 @@ void _onTagListItemTap(Tag tag) {
                                               children: <Widget>[
                                                 _truckTitle(),
                                                 _truckDetails(),
+                                                _truckWeeklySchedule(),
                                                 _truckDescription(),
                                               ]
                                           )),
@@ -415,42 +431,6 @@ void _onTagListItemTap(Tag tag) {
         ],
       ), // Column
     ); // Scaffold
-  }
-}
-
-
-class _ScheduleDisplayView extends StatelessWidget {
-  final String label;
-  final GestureTapCallback onTap;
-
-  _ScheduleDisplayView({this.label, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 48,
-        width: 142,
-        decoration: BoxDecoration(
-            border: Border.all(color: UiColors.lightPeriWinkle, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              label,
-              style: TextStyle(
-                  color: UiColors.darkSlateBlueTwo,
-                  fontSize: 16,
-                  fontFamily: 'ProximaNovaMedium'),
-            ),
-            Image.asset('images/icon-down.png')
-          ],
-        ),
-      ),
-    );
   }
 }
 

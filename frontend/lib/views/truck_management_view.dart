@@ -7,6 +7,7 @@ import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_edit_view.dart';
 import '../widgets/header_bar.dart';
+import '../widgets/horizon_calendar.dart';
 
 class TruckManagementView extends StatefulWidget {
   static String id = "truck_management";
@@ -133,7 +134,7 @@ class _TruckManagementState extends State<TruckManagementView> {
   }
 
   Widget _truckScheduleDetail() {
-  	String displayTime = "${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}";
+  	String displayTime = "${TimeUtils.formatTimeOfDay(truck.schedule.start)} - ${TimeUtils.formatTimeOfDay(truck.schedule.end)}";
   	return Padding(
           padding: EdgeInsets.only(bottom: 11),
           child:Semantics(
@@ -196,6 +197,19 @@ class _TruckManagementState extends State<TruckManagementView> {
         ));
   }
 
+  void _updateSchedule(WeeklyScheduleItem item) {
+    truck.schedule.start = item.start;
+    truck.schedule.end = item.end;
+    truck.location = item.location;
+    updateFoodTruck(truck).then((bool isSuccess) {
+      this.setState(() {});
+    });
+  }
+
+  Widget _truckSchedule() {
+    return HorizonCalendar(schedule:truck.weeklySchedule, onTap:_updateSchedule);
+  }
+
   @override
   Widget build(BuildContext context) {
     return _isTruckLoading? Stack(
@@ -233,6 +247,7 @@ class _TruckManagementState extends State<TruckManagementView> {
 	                                        children: <Widget>[
 	                                          _truckTitle(),
 	                                          _truckDetails(),
+                                            _truckSchedule(),
 	                                          _truckDescription(),
 	                                        ]
 	                                    )),
