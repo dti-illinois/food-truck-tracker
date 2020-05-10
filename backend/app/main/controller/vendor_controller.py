@@ -31,7 +31,7 @@ class VendorList(Resource):
 
     @api.doc('create a vendor')
     @api.marshal_with(_vendor_detail)
-    @api.expect(_vendor_detail, validate=False)
+    @api.expect(_vendor_detail, validate=True)
     def post(self):
         """
         example post body:
@@ -45,7 +45,6 @@ class VendorList(Resource):
                 "tags":["a","b"]
             }
         """
-        print(request.get_json())
         return post_vendor(request.get_json())
 
 @api.route('/<string:vendor_username>')

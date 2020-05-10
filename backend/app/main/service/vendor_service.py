@@ -1,6 +1,7 @@
 from ..model.vendor_model import *
 from ..model.user_model import User 
 from datetime import date, datetime, timezone
+from dateutil import tz
 from bson import json_util
 from ..utils.utils import parse_string_to_datetime, objects_to_json
 
@@ -39,12 +40,15 @@ def update_fav_trucks(username, truck_usernames):
 
 # The function takes in vendor as a json object 
 def add_vendor_info(vendor):
-	# start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
-	# now = datetime.now(timezone.utc).time()
-	# if start <= now <= end:
-	# 	vendor['is_open'] = True
-	# else:
-	# 	vendor['is_open'] = False
+	if 'schedule' in vendor and vendor['schedule']['start'] and vendor['schedule']['end']:
+		start, end = vendor['schedule']['start'].time(), vendor['schedule']['end'].time()
+		now = datetime.now(timezone.utc).astimezone(tz.tzlocal()).time()
+		if start <= now <= end:
+			vendor['is_open'] = True
+		else:
+			vendor['is_open'] = False
+	else:
+		vendor['is_open'] = False
 	return vendor
 
 def post_vendor(vendor):
