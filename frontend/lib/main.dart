@@ -8,6 +8,7 @@ import 'views/truck_direction_map_view.dart';
 import 'views/truck_edit_view.dart';
 import 'views/truck_management_view.dart';
 import 'views/truck_panel.dart';
+import 'views/weekly_schedule_item_edit_view.dart';
 
 void main() async {
   await _initServices();
@@ -56,6 +57,13 @@ class FoodTruckTracker extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return TruckEditView(truck: settings.arguments);
+              },
+            );
+          } else if (settings.name == WeeklyScheduleItemEditView.id) {
+            return MaterialPageRoute(
+              builder: (context) {
+                WeeklyScheduleItemEditViewArguments args = settings.arguments;
+                return WeeklyScheduleItemEditView(wkitem: args.wkitem, onDelete: args.onDelete, onSave: args.onSave, isNewItem: args.isNewItem);
               },
             );
           }

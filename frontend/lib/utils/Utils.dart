@@ -84,6 +84,9 @@ class LocationUtils {
   static final int defaultLocationRadiusInMeters = 1000;
 
   static double distance(double lat1, double lon1, double lat2, double lon2) {
+    if (lat1 == null || lon1 == null || lat2 == null || lon2 == null ) {
+      return -1;
+    }
     double theta = lon1 - lon2;
     double dist = sin(deg2rad(lat1)) 
                     * sin(deg2rad(lat2))
@@ -122,5 +125,22 @@ class TimeUtils{
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
     final format = DateFormat.jm();  //"6:00 AM"
     return format.format(dt);
+  }
+  static TimeOfDay timeOfDayFromTimestamp(String timestamp) {
+    return TimeOfDay.fromDateTime(DateTime.parse(timestamp));
+  }
+  static String timestampFromTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    return dt.toIso8601String();
+  }
+  static int compareTOD(TimeOfDay a, TimeOfDay b) {
+    if (a==b) {
+      return 0;
+    }
+    if (a.hour < b.hour || (a.hour == b.hour && a.minute < b.minute)) {
+      return -1;
+    }
+    return 1;
   }
 }

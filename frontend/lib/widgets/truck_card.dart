@@ -116,7 +116,7 @@ class TruckCardState extends State<TruckCard> {
 
 	  Widget _scheduleDetail() {
 	  	TruckModel truck = widget.truck;
-	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}" : "Closed";
+	  	String scheduleString = truck.isOpen ? "Is Open, from ${TimeUtils.formatTimeOfDay(truck.schedule.start)} - ${TimeUtils.formatTimeOfDay(truck.schedule.end)}" : "Closed";
 	  	return Padding(
 		      padding: _detailPadding,
 		      child: Row(

@@ -114,7 +114,7 @@ class _FoodTruckMapState extends State<FoodTruckMapView> {
           position: LatLng(truck.location.lat, truck.location.lng),
           infoWindow: InfoWindow(
             title: truck.displayedName,
-            snippet: '${TimeUtils.formatTimestamp(truck.schedule.start)} - ${TimeUtils.formatTimestamp(truck.schedule.end)}',
+            snippet: '${TimeUtils.formatTimeOfDay(truck.schedule.start)} - ${TimeUtils.formatTimeOfDay(truck.schedule.end)}',
             ),
           );
           markers.add(marker);
