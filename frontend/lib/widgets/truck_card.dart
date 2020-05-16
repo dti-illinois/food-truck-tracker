@@ -3,6 +3,10 @@ import '../models/truck_model.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../utils/Utils.dart';
+import 'dart:async';
+import 'package:location/location.dart' as lc;
+import 'package:flutter/services.dart';
+import 'dart:typed_data';
 
 class TruckCard extends StatefulWidget {
 	  TruckModel truck;
@@ -20,11 +24,15 @@ class TruckCardState extends State<TruckCard> {
 	bool _isFavorite;
 	static const EdgeInsets _iconPadding = EdgeInsets.only(right: 8);
 	static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
+	lc.Location _locationTracker;
+	lc.LocationData cur;
 
 	@override
 	void initState() {
 		_isFavorite = widget.isFavoriteVisible && User().isFavTruck(widget.truck.username);
 		User().addListener(userFavSubscriber);
+		_locationTracker = new lc.Location();
+		getCurrentLocation();
 		super.initState();
 	}
 
@@ -36,6 +44,10 @@ class TruckCardState extends State<TruckCard> {
 
 	void userFavSubscriber() {
 		this.setState(() {_isFavorite = User().isFavTruck(widget.truck.username);});
+	}
+
+	void getCurrentLocation() async {
+		cur = await _locationTracker.getLocation();
 	}
 
 	Widget _buildTags(TruckModel truck) {
@@ -128,7 +140,7 @@ class TruckCardState extends State<TruckCard> {
 
 	  Widget _locationDetail() {
 	  	TruckModel truck = widget.truck;
-	  	double distance = widget.center != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, widget.center.lat, widget.center.lng) : -1;
+	  	double distance = cur != null ? LocationUtils.distance(truck.location.lat, truck.location.lng, cur.latitude, cur.longitude) : -1;
 		String distanceString = distance >= 0 ? "${distance.toStringAsFixed(1)} mi away" : ""; 
 	  	
 	  	return distanceString == "" ? Container() : Padding(
