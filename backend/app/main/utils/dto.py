@@ -1,5 +1,5 @@
 from flask_restx import Namespace, fields
-from ..model.vendor_model import VendorTags
+from ..model.vendor_model import VendorTags, TimeFormat
 
 class VendorDto:
     api = Namespace('vendor', description='vendor related operations')
@@ -12,6 +12,12 @@ class VendorDto:
     	'start': fields.DateTime(required=True),
     	'end': fields.DateTime(required=True),
     	})
+    caldendarItem = api.model('schedule', {
+        'start': fields.DateTime(required=True),
+        'end': fields.DateTime(required=True),
+        'location': fields.Nested(location),
+        'week_day': fields.String(enum=TimeFormat.days),
+        })
     vendor = api.model('vendor', {
         'displayed_name': fields.String(description='vendor displayed name'),
         'username': fields.String(required=True, description='vendor username'),
@@ -22,6 +28,7 @@ class VendorDto:
     })
     vendor_detail = api.inherit('vendor_detail', vendor, {
         'description': fields.String(description='vendor description', default=''),
+        'weekly_schedule': fields.List(fields.Nested(caldendarItem))
     })
 
 class UserDto:
