@@ -2,7 +2,7 @@ import "package:http/http.dart" as http;
 import 'dart:convert';
 import "../models/truck_model.dart";
 
-var host = 'http://10.0.2.2:5000';
+var host = 'http://10.0.0.0:5000';
 
 Future<List<TruckModel>> getFoodTruckList(bool onlyOpen, Tag tag) async {
   final response = await http.get(host+'/vendor/');
