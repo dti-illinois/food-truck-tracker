@@ -7,6 +7,13 @@ from ..service.user_service import *
 api = UserDto.api
 _user_detail = UserDto.user_detail
 
+@api.route('')
+class UserList(Resource):
+    def post(self):
+        """get a user with its identifier"""
+        user = add_user(request.get_json())
+        return user 
+
 @api.route('/<user_username>')
 @api.param('user_username', 'The User identifier')
 @api.response(404, 'User not found.')

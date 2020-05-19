@@ -14,3 +14,14 @@ def get_user_by_username(username):
 
 def get_fav_trucks_username(user):
 	return list(map(lambda t: t.fetch().username, user.fav_trucks))
+
+def add_user(user):
+	try:
+		user = User(
+			username=user['username'],
+			fav_trucks=user.get('fav_trucks', [])
+			)
+		user.save()
+		return get_user_by_username(user['username'])
+	except:
+		return None

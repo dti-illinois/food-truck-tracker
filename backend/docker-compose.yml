@@ -10,4 +10,4 @@ services:
 #    entrypoint:
 #      ["python", "manage.py","run"]
     env_file:
-      - flask_variables.env 
+      - .env 

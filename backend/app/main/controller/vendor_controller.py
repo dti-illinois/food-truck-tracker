@@ -9,7 +9,7 @@ api = VendorDto.api
 _vendor = VendorDto.vendor
 _vendor_detail = VendorDto.vendor_detail
 parser = reqparse.RequestParser()
-parser.add_argument('username', action='append')
+parser.add_argument('usernames', action='append')
 parser.add_argument('displayed_name', type=str, location='args')
 parser.add_argument('tags', action='append')
 
@@ -18,7 +18,7 @@ class Home(Resource):
     def get(self):
         return "Hello World!"
 
-@api.route('/')
+@api.route('')
 class VendorList(Resource):
     @api.doc('list_of_registered_vendors')
     @api.marshal_list_with(_vendor)
@@ -33,19 +33,7 @@ class VendorList(Resource):
     @api.marshal_with(_vendor_detail)
     @api.expect(_vendor_detail, validate=True)
     def post(self):
-        """
-        example post body:
-            Content-Type: application/json
-            {
-                "username":"james",
-                "displayed_name":"j",
-                "location":{"lat": 11.32, "lng": 51.42},
-                "schedule":{"start": "2020-03-12T12:00:00", "end": "2020-03-12T14:00:00"},
-                "description":"1",
-                "tags":["a","b"]
-            }
-        """
-        return post_vendor(request.get_json())
+        return post_vendor(request.get_json()), 201
 
 @api.route('/<string:vendor_username>')
 @api.param('vendor_username', 'The Vendor identifier')
