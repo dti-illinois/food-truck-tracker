@@ -29,7 +29,7 @@ class MapDirectionView extends StatefulWidget {
 	Location targetLocation;
 
 	//MapDirectionView({this.curLocation, this.targetLocation});
-  	MapDirectionView({this.targetLocation});
+	MapDirectionView({this.targetLocation});
 
 	@override
 	State<StatefulWidget> createState() => MapDirectionState();
@@ -49,28 +49,28 @@ class MapDirectionState extends State<MapDirectionView> {
 	// this will hold each polyline coordinate as Lat and Lng pairs
 	List<LatLng> polylineCoordinates = [];
 	// generates every polyline between start and finish
-	PolylinePoints polylinePoints = PolylinePoints(); 
+	PolylinePoints polylinePoints = PolylinePoints();
 
 	BitmapDescriptor sourceIcon;
 	BitmapDescriptor destinationIcon;
 	LatLng _sourceLocation;
 	LatLng _destLocation;
 	bool _isLocationLoaded;
-	@override 
+	@override
 	void initState() {
 		super.initState();
 		//initialize current location
 		_destLocation = LatLng(widget.targetLocation.lat,  widget.targetLocation.lng);
 		_locationTracker = new lc.Location();
-	 	_isLocationLoaded = false;
+		_isLocationLoaded = false;
 		_locationTracker.onLocationChanged.listen((lc.LocationData cLoc) {
-				_isLocationLoaded = true;
-				_currentLocation = cLoc;
-				lastLocation = cLoc;
-				updatePinOnMap();
+			_isLocationLoaded = true;
+			_currentLocation = cLoc;
+			lastLocation = cLoc;
+			updatePinOnMap();
 		});
 
-    	_setSourceAndDestinationIcons();
+		_setSourceAndDestinationIcons();
 		setInitialLocation();
 	}
 
@@ -84,49 +84,49 @@ class MapDirectionState extends State<MapDirectionView> {
 		});
 	}
 
-  void updatePinOnMap() async {
-    CameraPosition cPosition = CameraPosition(
-      zoom: CAMERA_ZOOM,
-      tilt: CAMERA_TILT,
-      bearing: CAMERA_BEARING,
-      target: LatLng(_currentLocation.latitude,
+	void updatePinOnMap() async {
+		CameraPosition cPosition = CameraPosition(
+			zoom: CAMERA_ZOOM,
+			tilt: CAMERA_TILT,
+			bearing: CAMERA_BEARING,
+			target: LatLng(_currentLocation.latitude,
 					_currentLocation.longitude),
-    );
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(cPosition));
-    setState(() {
-      // updated position
-      var pinPosition = LatLng(_currentLocation.latitude,
+		);
+		final GoogleMapController controller = await _controller.future;
+		controller.animateCamera(CameraUpdate.newCameraPosition(cPosition));
+		setState(() {
+			// updated position
+			var pinPosition = LatLng(_currentLocation.latitude,
 					_currentLocation.longitude);
 
-      // the trick is to remove the marker (by id)
-      // and add it again at the updated location
-      _markers.removeWhere(
-              (m) => m.markerId.value == 'sourcePin');
-      _markers.add(Marker(
-          markerId: MarkerId('sourcePin'),
-          position: pinPosition, // updated position
-          icon: sourceIcon
-      ));
-    });
+			// the trick is to remove the marker (by id)
+			// and add it again at the updated location
+			_markers.removeWhere(
+							(m) => m.markerId.value == 'sourcePin');
+			_markers.add(Marker(
+					markerId: MarkerId('sourcePin'),
+					position: pinPosition, // updated position
+					icon: sourceIcon
+			));
+		});
 		//setPolylines();
-  }
+	}
 
 
-  void _setSourceAndDestinationIcons() async {
+	void _setSourceAndDestinationIcons() async {
 		AssetUtils.getBytesFromAsset('images/current-location.png', 50)
-	      			.then((bytes) {
-	      					sourceIcon = BitmapDescriptor.fromBytes(bytes);
-	      				});
+				.then((bytes) {
+			sourceIcon = BitmapDescriptor.fromBytes(bytes);
+		});
 		AssetUtils.getBytesFromAsset('images/marker.png', 100)
-					.then((bytes) {
-							destinationIcon = BitmapDescriptor.fromBytes(bytes);
-						});
+				.then((bytes) {
+			destinationIcon = BitmapDescriptor.fromBytes(bytes);
+		});
 	}
 
 	void _onMapCreated(GoogleMapController controller) {
-	   _controller.complete(controller);
-	   setMapPins();
+		_controller.complete(controller);
+		setMapPins();
 	}
 
 	void setMapPins() {
@@ -136,55 +136,55 @@ class MapDirectionState extends State<MapDirectionView> {
 		var pinPosition = LatLng(_currentLocation.latitude,
 				_currentLocation.longitude);
 
-			_markers.add(Marker(
+		_markers.add(Marker(
 				markerId: MarkerId('sourcePin'),
 				position: pinPosition,
 				icon: sourceIcon
-			));
-			// destination pin
-			_markers.add(Marker(
+		));
+		// destination pin
+		_markers.add(Marker(
 				markerId: MarkerId('destPin'),
 				position: _destLocation ,
 				icon: destinationIcon
-			));
+		));
 		setPolylines();
 	}
 
 	void setPolylines() async {
-    	_polylines.clear();
-		polylineCoordinates.clear(); 
+		_polylines.clear();
+		polylineCoordinates.clear();
 		await
-		  polylinePoints?.getRouteBetweenCoordinates(
-					GOOGLE_MAP_API_KEY,
-					_currentLocation.latitude,
-					_currentLocation.longitude,
-				    _destLocation.latitude,
-				    _destLocation.longitude)
-		  .then((result) {
-				if(result.isNotEmpty){
-				  // loop through all PointLatLng points and convert them
-				  // to a list of LatLng, required by the Polyline
-				  result.forEach((PointLatLng point){
-				  	print("added ${point.latitude}, ${point.longitude}" );
-				     polylineCoordinates.add(
-				        LatLng(point.latitude, point.longitude));
-				  });
-				}
-		  	});
-		  		
-		setState(() {
-		  // create a Polyline instance
-		  // with an id, an RGB color and the list of LatLng pairs
-		  Polyline polyline = Polyline(
-		     polylineId: PolylineId("poly"),
-		     color: Color.fromARGB(255, 40, 122, 198),
-		     points: polylineCoordinates
-		  );
+		polylinePoints?.getRouteBetweenCoordinates(
+				GOOGLE_MAP_API_KEY,
+				_currentLocation.latitude,
+				_currentLocation.longitude,
+				_destLocation.latitude,
+				_destLocation.longitude)
+				.then((result) {
+			if(result.isNotEmpty){
+				// loop through all PointLatLng points and convert them
+				// to a list of LatLng, required by the Polyline
+				result.forEach((PointLatLng point){
+					print("added ${point.latitude}, ${point.longitude}" );
+					polylineCoordinates.add(
+							LatLng(point.latitude, point.longitude));
+				});
+			}
+		});
 
-		  // add the constructed polyline as a set of points
-		  // to the polyline set, which will eventually
-		  // end up showing up on the map
-		  _polylines.add(polyline);
+		setState(() {
+			// create a Polyline instance
+			// with an id, an RGB color and the list of LatLng pairs
+			Polyline polyline = Polyline(
+					polylineId: PolylineId("poly"),
+					color: Color.fromARGB(255, 40, 122, 198),
+					points: polylineCoordinates
+			);
+
+			// add the constructed polyline as a set of points
+			// to the polyline set, which will eventually
+			// end up showing up on the map
+			_polylines.add(polyline);
 		});
 	}
 

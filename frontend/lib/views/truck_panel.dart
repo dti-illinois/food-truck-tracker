@@ -11,6 +11,9 @@ import '../views/truck_list_view.dart';
 import '../views/truck_map_view.dart';
 import '../widgets/display_type_header.dart';
 import '../widgets/filter_tab.dart';
+import 'package:location/location.dart' as lc;
+import 'package:flutter/services.dart';
+import 'dart:typed_data';
 
 class _PanelData {
   TruckPanelState         _panelState;
@@ -39,8 +42,10 @@ class TruckPanelState extends State<TruckPanel> {
 	List<String> _filterTagValues;
 	List<String> _filterWorkTimeValues;
 	List<String> _filterFavTruckValues;
-	bool _filterOptionsVisible; 
-	Location _location = Location(lat: LOCATION_LAT, lng: LOCATION_LNG); 
+	bool _filterOptionsVisible;
+
+
+	Location _location;
 	ScrollController _scrollController = ScrollController();
 
 	@override
@@ -53,7 +58,16 @@ class TruckPanelState extends State<TruckPanel> {
 	void initState() {
 		_initFilters();
 		_loadTruckList();
+		getCurrentLocation();
 		super.initState();
+	}
+
+	void getCurrentLocation() async {
+		lc.Location _locationTracker;
+		lc.LocationData currentLocation;
+		_locationTracker = new lc.Location();
+		currentLocation = await _locationTracker.getLocation();
+		_location = Location(lat: currentLocation.latitude, lng:currentLocation.longitude);
 	}
 
 	void _loadTruckList() {
