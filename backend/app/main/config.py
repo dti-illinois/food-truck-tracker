@@ -1,12 +1,14 @@
 import os
 import urllib
+from dotenv import load_dotenv
+load_dotenv()
 
 # uncomment the line below for postgres database url from environment variable
-mongo_host = os.environ['MY_MONGODB_HOSTNAME']
-mongo_username = os.environ['MY_MONGODB_USERNAME']
-mongo_password = os.environ['MY_MONGODB_PASSWORD']
-mongo_dbname = os.environ['MY_MONGODB_DATABASE']
-mongo_param = os.environ['MY_MONGODB_PARAMS']
+mongo_host = os.environ['MONGODB_HOSTNAME']
+mongo_username = os.environ['MONGODB_USERNAME']
+mongo_password = os.environ['MONGODB_PASSWORD']
+mongo_dbname = os.environ['MONGODB_DATABASE']
+mongo_param = os.environ['MONGODB_PARAMS']
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:

@@ -1,16 +1,12 @@
 # frontend
 
-A new Flutter project.
+This is a flutter prototype application for the Food Truck Tracker project. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Please follow the guideline on [the flutter documentation](https://flutter.dev/docs) to run the application. 
 
-A few resources to get you started if this is your first Flutter project:
+## Current Functionalities
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Please see the demo video linked [here](https://drive.google.com/open?id=17y8xrUhPgRA1UpgmxHe9qjx_ixKUIcyw)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
