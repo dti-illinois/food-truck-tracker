@@ -6,6 +6,8 @@ import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_direction_map_view.dart';
 import '../widgets/header_bar.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
+
 
 class TruckDetailArgument {
   final TruckModel truck;
@@ -137,7 +139,7 @@ class _TruckDetailState extends State<TruckDetailView> {
     return Row(
         children: <Widget>[
             Row(
-            mainAxisSize: MainAxisSize.min,
+            //mainAxisSize: MainAxisSize.min,
             children: List.generate(5, (index) {
               return Icon(
               index < 4 ? Icons.star : Icons.star_border,
@@ -160,6 +162,7 @@ class _TruckDetailState extends State<TruckDetailView> {
   }
 
   _openAlertBox() {
+    var _rating = 0.0;
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -182,37 +185,24 @@ class _TruckDetailState extends State<TruckDetailView> {
                         "Rate",
                         style: TextStyle(fontSize: 24.0),
                       ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.star_border,
+                      //Row(
+                          //mainAxisSize: MainAxisSize.min,
+                      SmoothStarRating(
+                            rating: _rating,
+                            size: 30,
                             color: UiColors.illinoisOrange,
-                            size: 30.0,
-                          ),
-                          Icon(
-                            Icons.star_border,
-                            color: UiColors.illinoisOrange,
-                            size: 30.0,
-                          ),
-                          Icon(
-                            Icons.star_border,
-                            color: UiColors.illinoisOrange,
-                            size: 30.0,
-                          ),
-                          Icon(
-                            Icons.star_border,
-                            color: UiColors.illinoisOrange,
-                            size: 30.0,
-                          ),
-                          Icon(
-                            Icons.star_border,
-                            color: UiColors.illinoisOrange,
-                            size: 30.0,
+                            filledIconData: Icons.star,
+                            halfFilledIconData: Icons.star_half,
+                            defaultIconData: Icons.star_border,
+                            starCount: 5,
+                            allowHalfRating: true,
+                            spacing: 2.0,
+                            onRated: (value) {
+                              print("rating value -> $value");
+                              // print("rating value dd -> ${value.truncate()}");
+                            },
                           ),
                         ],
-                      ),
-                    ],
                   ),
                   SizedBox(
                     height: 5.0,
