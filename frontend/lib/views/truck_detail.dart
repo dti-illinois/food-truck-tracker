@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/truck_model.dart';
 import '../models/user_model.dart';
 import '../services/truck_service.dart';
@@ -7,6 +6,8 @@ import '../services/user_service.dart';
 import '../utils/Utils.dart';
 import '../views/truck_direction_map_view.dart';
 import '../widgets/header_bar.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
+
 
 class TruckDetailArgument {
   final TruckModel truck;
@@ -68,8 +69,9 @@ class _TruckDetailState extends State<TruckDetailView> {
 
    void _onLoacationDetailTapped() {
     Navigator.pushNamed(context, MapDirectionView.id, 
-      arguments: MapDirectionViewArguments(curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng), targetLocation: truck.location));
-  }
+      arguments: MapDirectionViewArguments(targetLocation: truck.location));
+    //curLocation: new Location(lat: truck.location.lat-.01, lng:truck.location.lng),
+   }
 
    Widget _truckTitle() {
     return Padding(
@@ -83,6 +85,7 @@ class _TruckDetailState extends State<TruckDetailView> {
                 truck.displayedName,
                 style: TextStyle(
                     fontSize: 24,
+                    fontFamily: 'ProximaNovaMedium',
                     color: UiColors.darkSlateBlueTwo,
                     letterSpacing: 1),
               ),
@@ -93,8 +96,12 @@ class _TruckDetailState extends State<TruckDetailView> {
                 child: Semantics(
                     label: _isFavorite ? 'Remove From Favorites': 'Add To Favorites',
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), 
-                      child: Image.asset(_isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
+                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                        child: IconButton(
+     icon: _isFavorite? Icon(Icons.star):Icon(Icons.star_border),
+     color: UiColors.darkBlueGrey,
+     onPressed: _toggleFavTruck,
+     )))
             ),),
           ],
         ));
@@ -127,6 +134,152 @@ class _TruckDetailState extends State<TruckDetailView> {
                 children: details))
         : Container();
   }
+
+  Widget _truckRating(){
+    return Row(
+        children: <Widget>[
+            Row(
+            //mainAxisSize: MainAxisSize.min,
+            children: List.generate(5, (index) {
+              return Icon(
+              index < truck.avg_rate ? Icons.star : Icons.star_border,
+              color: UiColors.illinoisOrange
+              );
+              }),
+            ),
+          Expanded(
+            child: Text(
+              "(${truck.rateCount} rated)",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'ProximaNovaMedium',
+                  color: Colors.grey,),
+            ),
+          ),
+          Expanded(
+            child: FlatButton(
+            onPressed: _openAlertBox,
+            color: Colors.white,
+            child: Text(
+              "give a rate",
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        ),
+    ],
+    );
+  }
+
+  _openAlertBox() {
+    var _rating = 0.0;
+    var _ratevalue;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32.0))),
+            contentPadding: EdgeInsets.only(top: 10.0),
+            content: Container(
+              width: 300.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        "Rate",
+                        style: TextStyle(fontSize: 24.0),
+                      ),
+                      //Row(
+                          //mainAxisSize: MainAxisSize.min,
+                      SmoothStarRating(
+                            rating: _rating,
+                            size: 30,
+                            color: UiColors.illinoisOrange,
+                            filledIconData: Icons.star,
+                            halfFilledIconData: Icons.star_half,
+                            defaultIconData: Icons.star_border,
+                            starCount: 5,
+                            allowHalfRating: true,
+                            spacing: 2.0,
+                            onRated: (value) {
+                              print("rating value -> $value");
+                              _ratevalue = value;
+                              // print("rating value dd -> ${value.truncate()}");
+                            },
+                          ),
+                        ],
+                  ),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                    height: 4.0,
+                  ),
+
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      decoration: BoxDecoration(
+                        color: UiColors.darkBlueGrey,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(32.0),
+                            bottomRight: Radius.circular(32.0)),
+                      ),
+                      child: FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _isFavoriteVisible? _giverate(_ratevalue) : _showError();
+                        },
+                        color: UiColors.darkBlueGrey,
+                        child: Text(
+                          "give a rate",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _giverate (var ratevalue){
+      var rate = RateItem();
+      rate.rateId = User().username;
+      rate.rate_val = ratevalue;
+      setState(() {});
+      updateTruckRate(truck.displayedName, rate);
+  }
+
+  _showError(){
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(
+              "Invalid user",
+              textAlign: TextAlign.center,
+            ),
+            children: <Widget>[
+              Text(
+                "Please log in first",
+                textAlign: TextAlign.center,
+              ),
+            ],
+            //backgroundColor: RED,
+            elevation: 4,
+          );
+        });
+}
 
   Widget _truckLocationDetail() {
     String locationText =  !truck.location.location_name.isEmpty ? truck.location.location_name : "(${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";
@@ -200,7 +353,9 @@ class _TruckDetailState extends State<TruckDetailView> {
   					color: UiColors.darkBlueGrey,
   					borderRadius: BorderRadius.circular(30),
   				), // BoxDecoration
-  				child: Text(
+  				child:
+
+          Text(
   					tag, style: TextStyle(
   					color: UiColors.white
   					), // TextStyle
@@ -221,6 +376,7 @@ class _TruckDetailState extends State<TruckDetailView> {
         ));
   }
 
+
   @override
   Widget build(BuildContext context) {
     return _isTruckLoading? Stack(
@@ -240,7 +396,23 @@ class _TruckDetailState extends State<TruckDetailView> {
           child: CustomScrollView(
             scrollDirection: Axis.vertical,
             slivers: <Widget>[
-            	SliverToutHeaderBar(context: context, imageUrl: 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',), // SliverToutHeaderBar
+              SliverAppBar(
+                snap: true,
+                floating: true,
+                backgroundColor: const Color(0xFF200087),
+                expandedHeight: 300,
+                //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(40))),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: ClipRRect(
+                    //borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
+                    child: Image.network(
+                      "https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            	//SliverToutHeaderBar(context: context, imageUrl: 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',), // SliverToutHeaderBar
             	SliverList(
             		delegate: SliverChildListDelegate(
             			[
@@ -257,6 +429,7 @@ class _TruckDetailState extends State<TruckDetailView> {
 	                                        crossAxisAlignment: CrossAxisAlignment.start,
 	                                        children: <Widget>[
 	                                          _truckTitle(),
+                                            _truckRating(),
 	                                          _truckDetails(),
 	                                          _truckDescription(),
 	                                        ]
@@ -273,6 +446,20 @@ class _TruckDetailState extends State<TruckDetailView> {
         ), //Expanded 
         ],
       ), // Column
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Container(height: 30.0,),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _onLoacationDetailTapped();
+          // Add your onPressed code here!
+
+        },
+        child: Icon(Icons.map),
+        backgroundColor: UiColors.darkBlueGrey,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     ); // Scaffold
   }
 }

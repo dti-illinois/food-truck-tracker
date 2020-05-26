@@ -25,10 +25,12 @@ class VendorDto:
         'schedule': fields.Nested(schedule, description='vendor schedule'),
         'tags': fields.List(fields.String(enum = VendorTags.tags)),
         'is_open': fields.Boolean(readonly=True, description='is vendor open'),
+        'avg_rate':fields.Float(description='vendor rate'),
+        'rateCount':fields.Integer(descriptionn ='vendor rate count'),
     })
     vendor_detail = api.inherit('vendor_detail', vendor, {
         'description': fields.String(description='vendor description', default=''),
-        'weekly_schedule': fields.List(fields.Nested(caldendarItem))
+        'weekly_schedule': fields.List(fields.Nested(caldendarItem)),
     })
 
 class UserDto:

@@ -13,6 +13,9 @@ class LoginView extends StatelessWidget {
 	void _onLogin(BuildContext context, String username, UserType type) {
 		if (type == UserType.User || type == UserType.Guest) {
 			User().updateUser(username, type)
+          /*.then((void _) {
+            Navigator.pushNamed(context, TruckPanel.id);
+      });*/
       .then((void x) {
           Navigator.pushNamed(context, TruckPanel.id);
         });

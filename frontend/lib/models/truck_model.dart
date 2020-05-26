@@ -11,10 +11,12 @@ class TruckModel {
 	List<Tag> tags;
   bool isOpen;
   WeeklySchedule weeklySchedule;
+  double avg_rate;
+  int rateCount;
 
 	TruckModel({this.username, this.displayedName, this.location, 
     this.schedule, this.description='', this.tags=const [],
-    this.isOpen, this.weeklySchedule});
+    this.isOpen, this.weeklySchedule,this.avg_rate, this.rateCount});
 
 	factory TruckModel.fromJson(Map<String, dynamic> json) {
 		return new TruckModel(
@@ -26,6 +28,8 @@ class TruckModel {
 				tags: TagHelper.tagsFromList(json['tags']),
         isOpen: json['is_open'] ??  false,
         weeklySchedule: WeeklySchedule.fromWeeklyScheduleItemsJson(json['weekly_schedule']),
+        avg_rate: json['avg_rate'],
+				rateCount: json['rateCount'],
 			);
 	}
 
@@ -112,7 +116,7 @@ class TagHelper {
 class Location {
 	double lat;
 	double lng;
-  String location_name; 
+	String location_name;
 	Location({this.lat, this.lng, this.location_name});
   Location.emptyLocation() {
     this.lat = 0;
@@ -274,6 +278,18 @@ class WeeklyScheduleItem {
       'end': TimeUtils.timestampFromTimeOfDay(end),
       'location': location.toJson(),
       'week_day': weekday,
+    };
+  }
+}
+
+class RateItem{
+  String rateId;
+  double rate_val;
+  RateItem({this.rateId, this.rate_val});
+  Map<String, dynamic> toJson() {
+    return {
+      'username': rateId,
+      'rate': rate_val,
     };
   }
 }

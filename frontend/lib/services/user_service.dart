@@ -1,12 +1,13 @@
 import '../config.dart';
 import "../models/user_model.dart";
+import "../models/truck_model.dart";
 
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import "package:http/http.dart" as http;
 
-var host = 'http://0.0.0.0:5000';
+var host = 'http://10.0.0.0:5000';
 var USER_URL = host + "/user"; 
 
 
@@ -82,5 +83,16 @@ Future<bool> putUser(UserModel user) async {
   if (response.statusCode == 200) {
     return true;
   } 
+  return false;
+}
+
+Future<bool> updateTruckRate(String truck_name, RateItem rate) async{
+  final response = await http.put('${host}/vendor/truck_rate/${truck_name}',
+  headers: {"Content-Type": "application/json"},
+  body: json.encode(
+      rate.toJson()));
+  if (response.statusCode == 200) {
+    return true;
+  }
   return false;
 }
