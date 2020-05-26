@@ -71,7 +71,7 @@ class Vendor(Resource):
         else:
             return vendor
 
-      
+
 @api.route('/fav_trucks/<username>')
 @api.param('username', 'The User identifier')
 class FavTruck(Resource):
@@ -84,4 +84,14 @@ class FavTruck(Resource):
     @api.doc('update favorite vendors of user')
     def put(self, username):
         return update_fav_trucks(username, request.json['fav_trucks'])
-        
+
+
+@api.route('/truck_rate/<truck_name>')
+@api.param('truck_name', 'The truck identifier')
+class RateTruck(Resource):
+    @api.doc('give rate')
+    @api.marshal_with(_vendor)
+
+    @api.doc('update rate vy user')
+    def put(self, truck_name):
+        return update_rate(request.json['username'],truck_name,request.json['rate'] )

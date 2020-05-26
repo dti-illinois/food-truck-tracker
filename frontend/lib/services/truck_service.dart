@@ -69,3 +69,4 @@ Future<bool> updateFoodTruck(TruckModel truck) async {
     return false;
   }
 }
+

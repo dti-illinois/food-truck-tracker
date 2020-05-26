@@ -142,11 +142,20 @@ class _TruckDetailState extends State<TruckDetailView> {
             //mainAxisSize: MainAxisSize.min,
             children: List.generate(5, (index) {
               return Icon(
-              index < 4 ? Icons.star : Icons.star_border,
+              index < truck.avg_rate ? Icons.star : Icons.star_border,
               color: UiColors.illinoisOrange
               );
               }),
             ),
+          Expanded(
+            child: Text(
+              "(${truck.rateCount} rated)",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'ProximaNovaMedium',
+                  color: Colors.grey,),
+            ),
+          ),
           Expanded(
             child: FlatButton(
             onPressed: _openAlertBox,
@@ -163,6 +172,7 @@ class _TruckDetailState extends State<TruckDetailView> {
 
   _openAlertBox() {
     var _rating = 0.0;
+    var _ratevalue;
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -199,6 +209,7 @@ class _TruckDetailState extends State<TruckDetailView> {
                             spacing: 2.0,
                             onRated: (value) {
                               print("rating value -> $value");
+                              _ratevalue = value;
                               // print("rating value dd -> ${value.truncate()}");
                             },
                           ),
@@ -211,16 +222,7 @@ class _TruckDetailState extends State<TruckDetailView> {
                     color: Colors.grey,
                     height: 4.0,
                   ),
-                  /*Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Add Review",
-                        border: InputBorder.none,
-                      ),
-                      maxLines: 8,
-                    ),
-                  ),*/
+
                   InkWell(
                     child: Container(
                       padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
@@ -230,10 +232,16 @@ class _TruckDetailState extends State<TruckDetailView> {
                             bottomLeft: Radius.circular(32.0),
                             bottomRight: Radius.circular(32.0)),
                       ),
-                      child: Text(
-                        "Rate Product",
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
+                      child: FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _isFavoriteVisible? _giverate(_ratevalue) : _showError();
+                        },
+                        color: UiColors.darkBlueGrey,
+                        child: Text(
+                          "give a rate",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
@@ -243,6 +251,35 @@ class _TruckDetailState extends State<TruckDetailView> {
           );
         });
   }
+
+  _giverate (var ratevalue){
+      var rate = RateItem();
+      rate.rateId = User().username;
+      rate.rate_val = ratevalue;
+      setState(() {});
+      updateTruckRate(truck.displayedName, rate);
+  }
+
+  _showError(){
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(
+              "Invalid user",
+              textAlign: TextAlign.center,
+            ),
+            children: <Widget>[
+              Text(
+                "Please log in first",
+                textAlign: TextAlign.center,
+              ),
+            ],
+            //backgroundColor: RED,
+            elevation: 4,
+          );
+        });
+}
 
   Widget _truckLocationDetail() {
     String locationText =  !truck.location.location_name.isEmpty ? truck.location.location_name : "(${truck.location.lat.toStringAsFixed(1)}, ${truck.location.lng.toStringAsFixed(1)})";

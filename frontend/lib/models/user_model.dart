@@ -63,3 +63,4 @@ class UserModel {
   	return favTrucks.contains(truckname);
   }
 }
+
