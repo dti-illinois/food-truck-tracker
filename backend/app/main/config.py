@@ -20,7 +20,8 @@ class DevelopmentConfig(Config):
         "db": mongo_dbname,
         "username": mongo_username,
         "password": mongo_password, 
-        "host": 'mongodb://{}:{}@{}/{}?{}'.format(mongo_username, mongo_password, mongo_host, mongo_dbname, mongo_param)
+        "host": 'mongodb://{}:{}@{}/{}?{}'.format(mongo_username, mongo_password, mongo_host, mongo_dbname, mongo_param),
+        "port": 27017
     }
 
 class TestingConfig(Config):
